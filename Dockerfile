@@ -10,5 +10,5 @@ COPY target/api-musapi-0.0.1-SNAPSHOT.jar app.jar
 # Puerto que expone la API (debe coincidir con server.port de Spring Boot)
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Comando para ejecutar la aplicación con el perfil 'docker'
+ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "app.jar"]

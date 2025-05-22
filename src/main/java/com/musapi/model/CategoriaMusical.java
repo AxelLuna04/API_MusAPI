@@ -5,6 +5,8 @@
 package com.musapi.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -23,6 +25,9 @@ public class CategoriaMusical {
     
     @Column (length = 300, nullable = false)
     private String descripcion;
+    
+    @OneToMany(mappedBy = "categoriaMusical", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cancion> canciones = new ArrayList<>();
 
     //Getters y setters
     
@@ -48,6 +53,14 @@ public class CategoriaMusical {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public List<Cancion> getCanciones() {
+        return canciones;
+    }
+
+    public void setCanciones(List<Cancion> canciones) {
+        this.canciones = canciones;
     }
     
     

@@ -5,6 +5,8 @@
 package com.musapi.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -19,7 +21,7 @@ public class Usuario {
     @Column(name = "idUsuario")
     private Integer idUsuario;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = true)
     private String nombre;
 
     @Column(length = 320, nullable = false, unique = true)
@@ -28,7 +30,7 @@ public class Usuario {
     @Column(name = "nombreUsuario", length = 30, nullable = false, unique = true)
     private String nombreUsuario;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String pais;
 
     @Column(name = "esAdmin", nullable = false)
@@ -37,7 +39,17 @@ public class Usuario {
     @Column(name = "esArtista", nullable = false)
     private Boolean esArtista;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ListaDeReproduccion> listasDeReproduccion = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notificacion> notificaciones = new ArrayList<>();
+    
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private PerfilArtista perfilArtista;
+    
     // Getters y setters
+
     public Integer getIdUsuario() {
         return idUsuario;
     }
@@ -93,4 +105,30 @@ public class Usuario {
     public void setEsArtista(Boolean esArtista) {
         this.esArtista = esArtista;
     }
+
+    public List<ListaDeReproduccion> getListasDeReproduccion() {
+        return listasDeReproduccion;
+    }
+
+    public void setListasDeReproduccion(List<ListaDeReproduccion> listasDeReproduccion) {
+        this.listasDeReproduccion = listasDeReproduccion;
+    }
+
+    public List<Notificacion> getNotificaciones() {
+        return notificaciones;
+    }
+
+    public void setNotificaciones(List<Notificacion> notificaciones) {
+        this.notificaciones = notificaciones;
+    }
+
+    public PerfilArtista getPerfilArtista() {
+        return perfilArtista;
+    }
+
+    public void setPerfilArtista(PerfilArtista perfilArtista) {
+        this.perfilArtista = perfilArtista;
+    }
+    
+    
 }
