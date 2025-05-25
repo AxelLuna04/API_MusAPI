@@ -36,6 +36,9 @@ public class Cancion {
     @Column(name = "fechaPublicacion", nullable = false)
     private LocalDate fechaPublicacion;
 
+    @Column(name = "estado", length = 15, nullable = false)
+    private String estado;
+    
     @Lob
     @Column(name = "foto", nullable = false)
     private byte[] foto;
@@ -63,6 +66,8 @@ public class Cancion {
     @OneToMany(mappedBy = "cancion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContenidoGuardado> contenidosGuardados = new ArrayList<>();
     
+    @OneToMany(mappedBy = "cancion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SolicitudColaboracion> solicitudesColaboracion = new ArrayList<>();
     
     //Getters y setters
 
@@ -168,6 +173,14 @@ public class Cancion {
 
     public void setContenidosGuardados(List<ContenidoGuardado> contenidosGuardados) {
         this.contenidosGuardados = contenidosGuardados;
+    }
+
+    public List<SolicitudColaboracion> getSolicitudesColaboracion() {
+        return solicitudesColaboracion;
+    }
+
+    public void setSolicitudesColaboracion(List<SolicitudColaboracion> solicitudesColaboracion) {
+        this.solicitudesColaboracion = solicitudesColaboracion;
     }
     
     

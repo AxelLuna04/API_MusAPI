@@ -30,7 +30,7 @@ public class Evaluacion {
     
     @ManyToOne
     @JoinColumn(name = "idPerfilArtista", nullable = false)
-    private PerfilArtista PerfilArtista;
+    private PerfilArtista perfilArtista;
     
     //Getters y setters
 
@@ -67,11 +67,11 @@ public class Evaluacion {
     }
 
     public PerfilArtista getPerfilArtista() {
-        return PerfilArtista;
+        return perfilArtista;
     }
 
     public void setPerfilArtista(PerfilArtista PerfilArtista) {
-        this.PerfilArtista = PerfilArtista;
+        this.perfilArtista = PerfilArtista;
     }
 
     

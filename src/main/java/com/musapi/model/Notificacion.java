@@ -31,6 +31,9 @@ public class Notificacion {
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
+    
+    @OneToOne(mappedBy = "notificacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private SolicitudColaboracion solicitudColaboracion;
 
     //Getters y setters
 

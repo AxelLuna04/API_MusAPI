@@ -31,6 +31,9 @@ public class Album {
     @Column(name = "foto", nullable = false)
     private byte[] foto;
 
+    @Column(name = "estado", length = 15, nullable = false)
+    private String estado;
+    
     @ManyToOne
     @JoinColumn(name = "idPerfilArtista", nullable = false)
     private PerfilArtista perfilArtista;
