@@ -4,13 +4,19 @@
  */
 package com.musapi.controller;
 
+import com.musapi.dto.BusquedaArtistaDTO;
+import com.musapi.dto.EdicionPerfilDTO;
+import com.musapi.dto.LoginRequest;
 import com.musapi.model.Usuario;
 import com.musapi.repository.UsuarioRepository;
+import com.musapi.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -19,11 +25,20 @@ import org.springframework.http.ResponseEntity;
  * @author jarly
  */
 public class UsuarioController {
-     @Autowired
+    @Autowired
     private UsuarioRepository usuarioRepository;
+     
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+     
+    @Autowired
+    private UsuarioService usuarioService;
 
     @PostMapping("/registrar")
     public Usuario registrarUsuario(@RequestBody Usuario usuario) {
+        String contrasenaSinHash = usuario.getContrasena();
+        String contrasenaHasheada = passwordEncoder.encode(contrasenaSinHash);
+        usuario.setContrasena(contrasenaHasheada);
         return usuarioRepository.save(usuario);
     }
 
@@ -80,6 +95,43 @@ public class UsuarioController {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
+        Usuario usuario = usuarioRepository.findByCorreo(loginRequest.getCorreo());
+
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(0);
+        }
+
+        boolean contrasenaValida = passwordEncoder.matches(loginRequest.getContrasena(), usuario.getContrasena());
+
+        if (!contrasenaValida) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(1);
+        }
+
+        return ResponseEntity.ok(usuario);
+    }
+    
+    @PutMapping("/{id}/editar-perfil")
+    public ResponseEntity<?> editarPerfil(@PathVariable Integer id, @RequestBody EdicionPerfilDTO edicionPerfil){
+        try{
+            usuarioService.editarPerfil(id, edicionPerfil);
+            return ResponseEntity.ok("Perfil editado con exito.");
+        }catch(Exception ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+    
+    @GetMapping("/artistas/buscar")
+    public ResponseEntity<?> buscarArtistasPorNombreUsuario(@RequestParam String nombreUsuario) {
+        try {
+            List<BusquedaArtistaDTO> artistas = usuarioService.buscarArtistasPorNombreUsuario(nombreUsuario);
+            return ResponseEntity.ok(artistas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al buscar artistas.");
         }
     }
 }

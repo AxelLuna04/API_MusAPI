@@ -5,6 +5,7 @@
 package com.musapi.repository;
 
 import com.musapi.model.Usuario;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 /**
  *
@@ -13,4 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UsuarioRepository  extends JpaRepository<Usuario, Integer> {
     boolean existsByCorreo(String correo);
     boolean existsByNombreUsuario(String nombreUsuario);
+    Usuario findByCorreo(String correo);
+    List<Usuario> findByEsArtistaTrueAndNombreUsuarioContainingIgnoreCase(String nombreUsuario);
+
 }

@@ -38,6 +38,9 @@ public class Usuario {
 
     @Column(name = "esArtista", nullable = false)
     private Boolean esArtista;
+    
+    @Column(length = 255, nullable = false)
+    private String contrasena;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ListaDeReproduccion> listasDeReproduccion = new ArrayList<>();
@@ -105,6 +108,14 @@ public class Usuario {
     public void setEsArtista(Boolean esArtista) {
         this.esArtista = esArtista;
     }
+    
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
 
     public List<ListaDeReproduccion> getListasDeReproduccion() {
         return listasDeReproduccion;
@@ -129,6 +140,5 @@ public class Usuario {
     public void setPerfilArtista(PerfilArtista perfilArtista) {
         this.perfilArtista = perfilArtista;
     }
-    
-    
+       
 }
