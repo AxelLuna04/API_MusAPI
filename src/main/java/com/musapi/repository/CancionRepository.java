@@ -14,5 +14,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface CancionRepository extends JpaRepository<Cancion, Integer>{
     List<Cancion> findByNombreContainingIgnoreCase(String nombreCancion);
-            
+    Cancion findByIdCancion(Integer idCancion);        
 }

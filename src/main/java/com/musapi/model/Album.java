@@ -27,9 +27,8 @@ public class Album {
     @Column(name = "fechaPublicacion", nullable = false)
     private LocalDate fechaPublicacion;
 
-    @Lob
-    @Column(name = "foto", nullable = false)
-    private byte[] foto;
+    @Column(name = "urlFoto", length = 300)
+    private String urlFoto;
 
     @Column(name = "estado", length = 15, nullable = false)
     private String estado;
@@ -70,14 +69,6 @@ public class Album {
         this.fechaPublicacion = fechaPublicacion;
     }
 
-    public byte[] getFoto() {
-        return foto;
-    }
-
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
-    }
-
     public PerfilArtista getPerfilArtista() {
         return perfilArtista;
     }
@@ -102,5 +93,22 @@ public class Album {
         this.contenidosGuardados = contenidosGuardados;
     }
 
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
+    }
+    
+    
     
 }

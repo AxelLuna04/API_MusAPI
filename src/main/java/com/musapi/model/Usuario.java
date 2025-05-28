@@ -40,7 +40,7 @@ public class Usuario {
     private Boolean esArtista;
     
     @Column(length = 255, nullable = false)
-    private String contrasena;
+    private String contrasenia;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ListaDeReproduccion> listasDeReproduccion = new ArrayList<>();
@@ -109,12 +109,12 @@ public class Usuario {
         this.esArtista = esArtista;
     }
     
-    public String getContrasena() {
-        return contrasena;
+    public String getContrasenia() {
+        return contrasenia;
     }
 
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
+    public void setContrasenia(String contrasena) {
+        this.contrasenia = contrasena;
     }
 
     public List<ListaDeReproduccion> getListasDeReproduccion() {

@@ -12,5 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author axell
  */
 public interface PerfilArtistaRepository extends JpaRepository<PerfilArtista, Integer>{
-    
+    PerfilArtista findByIdPerfilArtista(Integer idPerfilArtista);
 }

@@ -7,8 +7,11 @@ package com.musapi.controller;
 import com.musapi.dto.BusquedaArtistaDTO;
 import com.musapi.dto.EdicionPerfilDTO;
 import com.musapi.dto.LoginRequest;
+import com.musapi.dto.PerfilArtistaDTO;
+import com.musapi.dto.RespuestaDTO;
 import com.musapi.model.Usuario;
 import com.musapi.repository.UsuarioRepository;
+import com.musapi.security.JwtUtils;
 import com.musapi.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,14 +36,23 @@ public class UsuarioController {
      
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @PostMapping("/registrar")
-    public Usuario registrarUsuario(@RequestBody Usuario usuario) {
-        String contrasenaSinHash = usuario.getContrasena();
-        String contrasenaHasheada = passwordEncoder.encode(contrasenaSinHash);
-        usuario.setContrasena(contrasenaHasheada);
-        return usuarioRepository.save(usuario);
+    public ResponseEntity<RespuestaDTO<Usuario>> registrarUsuario(@RequestBody Usuario usuario) {
+        try {
+            String contrasenaSinHash = usuario.getContrasenia();
+            String contrasenaHasheada = passwordEncoder.encode(contrasenaSinHash);
+            usuario.setContrasenia(contrasenaHasheada);
+            Usuario usuarioGuardado = usuarioRepository.save(usuario);
+            return ResponseEntity.ok(new RespuestaDTO<>("Usuario registrado con éxito.", usuarioGuardado));
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error al registrar usuario.", null));
+        }
     }
+
 
     @GetMapping
     public List<Usuario> obtenerUsuarios() {
@@ -99,39 +111,61 @@ public class UsuarioController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<RespuestaDTO<String>> login(@RequestBody LoginRequest loginRequest) {
         Usuario usuario = usuarioRepository.findByCorreo(loginRequest.getCorreo());
 
         if (usuario == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(0);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new RespuestaDTO<>("Correo no encontrado.", null));
         }
 
-        boolean contrasenaValida = passwordEncoder.matches(loginRequest.getContrasena(), usuario.getContrasena());
+        boolean contrasenaValida = passwordEncoder.matches(loginRequest.getContrasenia(), usuario.getContrasenia());
 
         if (!contrasenaValida) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(1);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new RespuestaDTO<>("Contraseña incorrecta.", null));
         }
-
-        return ResponseEntity.ok(usuario);
+        
+        String token = jwtUtils.generarToken(usuario.getCorreo());
+        return ResponseEntity.ok(new RespuestaDTO<>("Login exitoso.", token));
     }
+
     
     @PutMapping("/{id}/editar-perfil")
-    public ResponseEntity<?> editarPerfil(@PathVariable Integer id, @RequestBody EdicionPerfilDTO edicionPerfil){
-        try{
+    public ResponseEntity<RespuestaDTO<String>> editarPerfil(@PathVariable Integer id, @RequestBody EdicionPerfilDTO edicionPerfil){
+        try {
             usuarioService.editarPerfil(id, edicionPerfil);
-            return ResponseEntity.ok("Perfil editado con exito.");
-        }catch(Exception ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return ResponseEntity.ok(new RespuestaDTO<>("Perfil editado con éxito.", null));
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>(ex.getMessage(), null));
         }
     }
+
     
     @GetMapping("/artistas/buscar")
-    public ResponseEntity<?> buscarArtistasPorNombreUsuario(@RequestParam String nombreUsuario) {
+    public ResponseEntity<RespuestaDTO<List<BusquedaArtistaDTO>>> buscarArtistasPorNombreUsuario(@RequestParam String nombreUsuario) {
         try {
             List<BusquedaArtistaDTO> artistas = usuarioService.buscarArtistasPorNombreUsuario(nombreUsuario);
-            return ResponseEntity.ok(artistas);
+            return ResponseEntity.ok(new RespuestaDTO<>("Artistas encontrados.", artistas));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al buscar artistas.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RespuestaDTO<>("Error al buscar artistas.", null));
+        }
+    }
+
+    @PostMapping("/crear-perfilArtista")
+    public ResponseEntity<RespuestaDTO<Void>> crearPerfilArtista(@ModelAttribute PerfilArtistaDTO perfilArtistaDTO) {
+        try {
+            usuarioService.crearPerfilArtista(perfilArtistaDTO);
+            return ResponseEntity.ok(new RespuestaDTO<>("Perfil de artista creado exitosamente.", null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                new RespuestaDTO<>(e.getMessage(), null)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                new RespuestaDTO<>("Error interno del servidor. No se pudo crear el perfil de artista.", null)
+            );
         }
     }
 }

@@ -10,7 +10,7 @@ package com.musapi.dto;
  */
 public class LoginRequest {
     private String correo;
-    private String contrasena;
+    private String contrasenia;
 
     public String getCorreo() {
         return correo;
@@ -20,12 +20,12 @@ public class LoginRequest {
         this.correo = correo;
     }
 
-    public String getContrasena() {
-        return contrasena;
+    public String getContrasenia() {
+        return contrasenia;
     }
 
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
+    public void setContrasenia(String contrasena) {
+        this.contrasenia = contrasena;
     }
     
 }

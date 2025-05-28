@@ -13,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface CategoriaMusicalRepository extends JpaRepository<CategoriaMusical, Integer> {
     //boolean existsByNombreCategoria (String nombreCategoria);
+    CategoriaMusical findByIdCategoriaMusical(Integer idCategoriaMusical);
 }

@@ -15,15 +15,15 @@ public class BusquedaArtistaDTO {
     private String nombre;
     private String nombreUsuario;
     private String descripcion;
-    private byte[] foto;
+    private String urlFoto;
     private List<BusquedaCancionDTO> canciones;
 
-    public BusquedaArtistaDTO(Integer idArtista, String nombre, String nombreUsuario, String descripcion, byte[] foto, List<BusquedaCancionDTO> canciones) {
+    public BusquedaArtistaDTO(Integer idArtista, String nombre, String nombreUsuario, String descripcion, String urlFoto, List<BusquedaCancionDTO> canciones) {
         this.idArtista = idArtista;
         this.nombre = nombre;
         this.nombreUsuario = nombreUsuario;
         this.descripcion = descripcion;
-        this.foto = foto;
+        this.urlFoto = urlFoto;
         this.canciones = canciones;
     }
 
@@ -59,12 +59,12 @@ public class BusquedaArtistaDTO {
         this.descripcion = descripcion;
     }
 
-    public byte[] getFoto() {
-        return foto;
+    public String getUrlFoto() {
+        return urlFoto;
     }
 
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     public List<BusquedaCancionDTO> getCanciones() {

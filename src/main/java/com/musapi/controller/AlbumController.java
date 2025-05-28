@@ -4,14 +4,20 @@
  */
 package com.musapi.controller;
 
+import com.musapi.dto.AlbumDTO;
 import com.musapi.dto.BusquedaAlbumDTO;
+import com.musapi.dto.RespuestaDTO;
 import com.musapi.service.AlbumService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -24,7 +30,40 @@ public class AlbumController {
     private AlbumService albumService;
     
     @GetMapping("/buscar")
-    public List<BusquedaAlbumDTO> buscarAlbumes(@RequestParam("texto") String texto){
-        return albumService.buscarAlbumesPorNombre(texto);
+    public ResponseEntity<RespuestaDTO<List<BusquedaAlbumDTO>>> buscarAlbumes(@RequestParam("texto") String texto) {
+        try {
+            List<BusquedaAlbumDTO> resultados = albumService.buscarAlbumesPorNombre(texto);
+
+            if (resultados.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>("No se encontraron álbumes", resultados));
+            }
+
+            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes encontrados exitosamente", resultados));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Ocurrió un error al buscar los álbumes", null));
+        }
     }
+    
+    @PostMapping("/crear")
+    public ResponseEntity<RespuestaDTO<Void>> crearAlbum(
+            @RequestParam("nombre") String nombre,
+            @RequestParam("idPerfilArtista") Integer idPerfilArtista,
+            @RequestParam("fechaPublicacion") String fechaPublicacionStr,
+            @RequestParam("foto") MultipartFile foto) {
+        AlbumDTO albumDTO = new AlbumDTO(nombre, idPerfilArtista, fechaPublicacionStr, foto);
+        try {
+            albumService.crearAlbum(albumDTO);
+            return ResponseEntity.ok(new RespuestaDTO<>("Álbum creado exitosamente.", null));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>(ex.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RespuestaDTO<>("Error al crear el álbum: " + e.getMessage(), null));
+        }
+    }
+
+
 }

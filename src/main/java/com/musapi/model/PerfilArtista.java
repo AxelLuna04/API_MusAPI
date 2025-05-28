@@ -24,10 +24,9 @@ public class PerfilArtista {
     @Column(length = 300, nullable = true, unique = true)
     private String descripcion;
 
-    @Lob
-    @Column(name = "foto", columnDefinition = "varbinary(max)", nullable = true)
-    private byte[] foto;
-    
+    @Column(name = "urlFoto", length = 300)
+    private String urlFoto;
+
     @OneToOne
     @JoinColumn(name = "idUsuario", referencedColumnName = "idUsuario")
     private Usuario usuario;
@@ -62,12 +61,12 @@ public class PerfilArtista {
         this.descripcion = descripcion;
     }
 
-    public byte[] getFoto() {
-        return foto;
+    public String getUrlFoto() {
+        return urlFoto;
     }
 
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     public Usuario getUsuario() {

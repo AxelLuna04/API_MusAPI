@@ -26,9 +26,8 @@ public class ListaDeReproduccion {
     @Column (length = 300, nullable = true)
     private String descripcion;
     
-    @Lob
-    @Column(name = "foto", nullable = true)
-    private byte[] foto;
+    @Column(name = "urlFoto", length = 300)
+    private String urlFoto;
     
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
@@ -66,14 +65,6 @@ public class ListaDeReproduccion {
         this.descripcion = descripcion;
     }
 
-    public byte[] getFoto() {
-        return foto;
-    }
-
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
-    }
-
     public Usuario getUsuario() {
         return usuario;
     }
@@ -96,6 +87,14 @@ public class ListaDeReproduccion {
 
     public void setContenidosGuardados(List<ContenidoGuardado> contenidosGuardados) {
         this.contenidosGuardados = contenidosGuardados;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     

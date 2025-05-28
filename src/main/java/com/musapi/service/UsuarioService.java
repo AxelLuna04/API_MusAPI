@@ -7,14 +7,16 @@ package com.musapi.service;
 import com.musapi.dto.BusquedaArtistaDTO;
 import com.musapi.dto.BusquedaCancionDTO;
 import com.musapi.dto.EdicionPerfilDTO;
+import com.musapi.dto.PerfilArtistaDTO;
 import com.musapi.model.PerfilArtista;
 import com.musapi.model.PerfilArtista_Cancion;
 import com.musapi.model.Usuario;
 import com.musapi.repository.PerfilArtistaRepository;
 import com.musapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,28 +34,55 @@ public class UsuarioService {
     private PerfilArtistaRepository perfilArtistaRepository;
     
     @Transactional
-    public boolean editarPerfil(Integer idUsuario, EdicionPerfilDTO edicionPerfil) throws Exception{
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(idUsuario);
-        if(optionalUsuario.isEmpty())
-            throw new Exception("Usuario no encontrado.");
-        
-        Usuario usuario = optionalUsuario.get();
-        
-        usuario.setNombre(edicionPerfil.getNombre());
-        usuario.setNombreUsuario(edicionPerfil.getNombreUsuario());
-        usuario.setPais(edicionPerfil.getPais());
-        
-        if (usuario.getEsArtista() != null && usuario.getEsArtista()) {
+    public boolean editarPerfil(Integer idUsuario, EdicionPerfilDTO edicionPerfil) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+        if (edicionPerfil.getNombre() != null)
+            usuario.setNombre(edicionPerfil.getNombre());
+
+        if (edicionPerfil.getNombreUsuario() != null)
+            usuario.setNombreUsuario(edicionPerfil.getNombreUsuario());
+
+        if (edicionPerfil.getPais() != null)
+            usuario.setPais(edicionPerfil.getPais());
+
+        if (Boolean.TRUE.equals(usuario.getEsArtista())) {
             PerfilArtista perfil = usuario.getPerfilArtista();
-            if (perfil != null && edicionPerfil.getDescripcion() != null) {
-                perfil.setDescripcion(edicionPerfil.getDescripcion());
+            if (perfil != null) {
+                if (edicionPerfil.getDescripcion() != null) {
+                    perfil.setDescripcion(edicionPerfil.getDescripcion());
+                }
+
+                if (edicionPerfil.getFoto() != null && !edicionPerfil.getFoto().isEmpty()) {
+                    if (perfil.getUrlFoto() != null) {
+                        String rutaAntigua = perfil.getUrlFoto().replaceFirst("/", "");
+                        File archivoAntiguo = new File(rutaAntigua);
+                        if (archivoAntiguo.exists()) {
+                            archivoAntiguo.delete();
+                        }
+                    }
+                    String nombreArchivo = "foto_" + usuario.getIdUsuario() + "_" + System.currentTimeMillis() + ".jpg";
+                    String rutaDestino = "uploads/fotos-artistas/" + nombreArchivo;
+                    File destino = new File(rutaDestino);
+
+                    destino.getParentFile().mkdirs();
+
+                    try {
+                        edicionPerfil.getFoto().transferTo(destino);
+                        perfil.setUrlFoto("/" + rutaDestino);
+                    } catch (IOException e) {
+                        throw new IllegalArgumentException("Error al guardar la nueva imagen.");
+                    }
+                }
                 perfilArtistaRepository.save(perfil);
             }
         }
-        
         usuarioRepository.save(usuario);
         return true;
     }
+
+
     
     public List<BusquedaArtistaDTO> buscarArtistasPorNombreUsuario(String nombreUsuario) {
         List<Usuario> artistas = usuarioRepository.findByEsArtistaTrueAndNombreUsuarioContainingIgnoreCase(nombreUsuario);
@@ -62,15 +91,15 @@ public class UsuarioService {
             PerfilArtista perfil = usuario.getPerfilArtista();
 
             List<BusquedaCancionDTO> canciones = perfil.getPerfilArtista_CancionList().stream()
-                    .map(PerfilArtista_Cancion::getCancion) // obtenemos la canción
-                    .filter(c -> c.getAlbum() == null)      // solo las que no están en álbum
+                    .map(PerfilArtista_Cancion::getCancion)
+                    .filter(c -> c.getAlbum() == null)
                     .limit(10)
                     .map(c -> new BusquedaCancionDTO(
                             c.getIdCancion(),
                             c.getNombre(),
                             c.getDuracion(),
-                            c.getArchivo(),
-                            c.getFoto(),
+                            c.getUrlArchivo(),
+                            c.getUrlFoto(),
                             usuario.getNombre(),
                             c.getFechaPublicacion(),
                             c.getAlbum().getNombre()
@@ -82,11 +111,44 @@ public class UsuarioService {
                     usuario.getNombre(),
                     usuario.getNombreUsuario(),
                     perfil.getDescripcion(),
-                    perfil.getFoto(),
+                    perfil.getUrlFoto(),
                     canciones
             );
         }).collect(Collectors.toList());
     }
+    
 
+    @Transactional
+    public void crearPerfilArtista(PerfilArtistaDTO perfilArtistaDTO) throws Exception {
+        Usuario usuario = usuarioRepository.findByIdUsuario(perfilArtistaDTO.getIdUsuario());
+
+        if (usuario == null) {
+            throw new Exception("Usuario no encontrado.");
+        }
+
+        PerfilArtista perfil = new PerfilArtista();
+        perfil.setDescripcion(perfilArtistaDTO.getDescripcion());
+        perfil.setUsuario(usuario);
+
+        if (perfilArtistaDTO.getFoto() != null) {
+            String nombreArchivo = "foto_" + usuario.getIdUsuario() + "_" + System.currentTimeMillis() + ".jpg";
+            String rutaDestino = "uploads/fotos-artistas/" + nombreArchivo;
+            java.io.File destino = new java.io.File(rutaDestino);
+            
+            destino.getParentFile().mkdirs();
+            
+            try {
+                perfilArtistaDTO.getFoto().transferTo(destino);
+                perfil.setUrlFoto("/" + rutaDestino);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Error al guardar la imagen.");
+            }
+        }
+          
+        perfilArtistaRepository.save(perfil);
+        usuario.setEsArtista(true);
+        usuario.setPerfilArtista(perfil);
+        usuarioRepository.save(usuario);
+    }
 
 }

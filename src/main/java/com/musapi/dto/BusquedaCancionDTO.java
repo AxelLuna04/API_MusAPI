@@ -15,18 +15,18 @@ public class BusquedaCancionDTO {
     private Integer idCancion;
     private String nombre;
     private LocalTime duracion;
-    private byte[] archivo;
-    private byte[] foto;
+    private String urlArchivo;
+    private String urlFoto;
     private String nombreArtista;
     private LocalDate fechaPublicacion;
     private String nombreAlbum;
 
-    public BusquedaCancionDTO(Integer idCancion, String nombre, LocalTime duracion, byte[] archivo, byte[] foto, String nombreArtista, LocalDate fechaPublicacion, String nombreAlbum) {
+    public BusquedaCancionDTO(Integer idCancion, String nombre, LocalTime duracion, String urlArchivo, String urlFoto, String nombreArtista, LocalDate fechaPublicacion, String nombreAlbum) {
         this.idCancion = idCancion;
         this.nombre = nombre;
         this.duracion = duracion;
-        this.archivo = archivo;
-        this.foto = foto;
+        this.urlArchivo = urlArchivo;
+        this.urlFoto = urlFoto;
         this.nombreArtista = nombreArtista;
         this.fechaPublicacion = fechaPublicacion;
         this.nombreAlbum = nombreAlbum;
@@ -56,20 +56,20 @@ public class BusquedaCancionDTO {
         this.duracion = duracion;
     }
 
-    public byte[] getArchivo() {
-        return archivo;
+    public String getUrlArchivo() {
+        return urlArchivo;
     }
 
-    public void setArchivo(byte[] archivo) {
-        this.archivo = archivo;
+    public void setUrlArchivo(String urlArchivo) {
+        this.urlArchivo = urlArchivo;
     }
 
-    public byte[] getFoto() {
-        return foto;
+    public String getUrlFoto() {
+        return urlFoto;
     }
 
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     public String getNombreArtista() {

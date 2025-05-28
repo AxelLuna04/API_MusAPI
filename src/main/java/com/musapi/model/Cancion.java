@@ -26,9 +26,8 @@ public class Cancion {
     @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 
-    @Lob
-    @Column(name = "archivo", nullable = false)
-    private byte[] archivo;
+    @Column(name = "urlArchivo", length = 100)
+    private String urlArchivo;
 
     @Column(name = "duracion", nullable = false)
     private LocalTime duracion;
@@ -39,9 +38,8 @@ public class Cancion {
     @Column(name = "estado", length = 15, nullable = false)
     private String estado;
     
-    @Lob
-    @Column(name = "foto", nullable = false)
-    private byte[] foto;
+    @Column(name = "urlFoto", length = 300) 
+    private String urlFoto;
 
     @ManyToOne
     @JoinColumn(name = "idCategoriaMusical", nullable = false)
@@ -87,14 +85,6 @@ public class Cancion {
         this.nombre = nombre;
     }
 
-    public byte[] getArchivo() {
-        return archivo;
-    }
-
-    public void setArchivo(byte[] archivo) {
-        this.archivo = archivo;
-    }
-
     public LocalTime getDuracion() {
         return duracion;
     }
@@ -109,14 +99,6 @@ public class Cancion {
 
     public void setFechaPublicacion(LocalDate fechaPublicacion) {
         this.fechaPublicacion = fechaPublicacion;
-    }
-
-    public byte[] getFoto() {
-        return foto;
-    }
-
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
     }
 
     public CategoriaMusical getCategoriaMusical() {
@@ -182,6 +164,31 @@ public class Cancion {
     public void setSolicitudesColaboracion(List<SolicitudColaboracion> solicitudesColaboracion) {
         this.solicitudesColaboracion = solicitudesColaboracion;
     }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getUrlArchivo() {
+        return urlArchivo;
+    }
+
+    public void setUrlArchivo(String urlArchivo) {
+        this.urlArchivo = urlArchivo;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
+    }
+    
     
     
 }

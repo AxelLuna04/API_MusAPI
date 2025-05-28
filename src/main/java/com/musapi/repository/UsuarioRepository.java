@@ -16,5 +16,5 @@ public interface UsuarioRepository  extends JpaRepository<Usuario, Integer> {
     boolean existsByNombreUsuario(String nombreUsuario);
     Usuario findByCorreo(String correo);
     List<Usuario> findByEsArtistaTrueAndNombreUsuarioContainingIgnoreCase(String nombreUsuario);
-
+    Usuario findByIdUsuario(Integer idUsuario);
 }

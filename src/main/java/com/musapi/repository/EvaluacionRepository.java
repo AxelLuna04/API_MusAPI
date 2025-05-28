@@ -4,16 +4,13 @@
  */
 package com.musapi.repository;
 
-import com.musapi.model.Album;
-import java.util.List;
+import com.musapi.model.Evaluacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author axell
  */
-
-public interface AlbumRepository extends JpaRepository<Album, Integer>{
-    List<Album> findByNombreContainingIgnoreCase(String texto);
-    Album findByIdAlbum(Integer idAlbum);
+public interface EvaluacionRepository extends JpaRepository<Evaluacion, Integer>{
+    Evaluacion findByUsuario_IdUsuarioAndPerfilArtista_IdPerfilArtista(Integer idUsuario, Integer idPerfilArtista);
 }

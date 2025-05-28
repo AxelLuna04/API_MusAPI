@@ -10,12 +10,18 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author axell
  */
-public class EdicionPerfilDTO {
+public class CreacionListaDeReproduccionDTO {
     private String nombre;
-    private String nombreUsuario;
-    private String pais;
     private String descripcion;
+    private Integer idUsuario;
     private MultipartFile foto;
+
+    public CreacionListaDeReproduccionDTO(String nombre, String descripcion, Integer idUsuario, MultipartFile foto) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.idUsuario = idUsuario;
+        this.foto = foto;
+    }
 
     public String getNombre() {
         return nombre;
@@ -25,28 +31,20 @@ public class EdicionPerfilDTO {
         this.nombre = nombre;
     }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
-
-    public String getPais() {
-        return pais;
-    }
-
-    public void setPais(String pais) {
-        this.pais = pais;
-    }
-
     public String getDescripcion() {
         return descripcion;
     }
 
-    public void setDescripcion(String direccion) {
-        this.descripcion = direccion;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Integer getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public MultipartFile getFoto() {
@@ -56,8 +54,6 @@ public class EdicionPerfilDTO {
     public void setFoto(MultipartFile foto) {
         this.foto = foto;
     }
-    
-    
     
     
 }
