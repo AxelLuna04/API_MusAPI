@@ -95,14 +95,14 @@ public class UsuarioService {
                     .filter(c -> c.getAlbum() == null)
                     .limit(10)
                     .map(c -> new BusquedaCancionDTO(
-                            c.getIdCancion(),
                             c.getNombre(),
-                            c.getDuracion(),
+                            c.getDuracion().toString(),
                             c.getUrlArchivo(),
                             c.getUrlFoto(),
                             usuario.getNombre(),
-                            c.getFechaPublicacion(),
-                            c.getAlbum().getNombre()
+                            c.getFechaPublicacion().toString(),
+                            c.getAlbum().getNombre(),
+                            c.getCategoriaMusical().getNombre()
                     ))
                     .collect(Collectors.toList());
 

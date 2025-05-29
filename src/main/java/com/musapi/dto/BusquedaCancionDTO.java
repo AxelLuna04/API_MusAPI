@@ -4,25 +4,21 @@
  */
 package com.musapi.dto;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 /**
  *
  * @author axell
  */
 public class BusquedaCancionDTO {
-    private Integer idCancion;
     private String nombre;
-    private LocalTime duracion;
+    private String duracion;
     private String urlArchivo;
     private String urlFoto;
     private String nombreArtista;
-    private LocalDate fechaPublicacion;
+    private String fechaPublicacion;
     private String nombreAlbum;
+    private String categoriaMusical;
 
-    public BusquedaCancionDTO(Integer idCancion, String nombre, LocalTime duracion, String urlArchivo, String urlFoto, String nombreArtista, LocalDate fechaPublicacion, String nombreAlbum) {
-        this.idCancion = idCancion;
+    public BusquedaCancionDTO(String nombre, String duracion, String urlArchivo, String urlFoto, String nombreArtista, String fechaPublicacion, String nombreAlbum, String categoriaMusical) {
         this.nombre = nombre;
         this.duracion = duracion;
         this.urlArchivo = urlArchivo;
@@ -30,15 +26,13 @@ public class BusquedaCancionDTO {
         this.nombreArtista = nombreArtista;
         this.fechaPublicacion = fechaPublicacion;
         this.nombreAlbum = nombreAlbum;
+        this.categoriaMusical = categoriaMusical;
     }
 
-    public Integer getIdCancion() {
-        return idCancion;
+    public BusquedaCancionDTO() {
     }
-
-    public void setIdCancion(Integer idCancion) {
-        this.idCancion = idCancion;
-    }
+    
+    
 
     public String getNombre() {
         return nombre;
@@ -48,11 +42,11 @@ public class BusquedaCancionDTO {
         this.nombre = nombre;
     }
 
-    public LocalTime getDuracion() {
+    public String getDuracion() {
         return duracion;
     }
 
-    public void setDuracion(LocalTime duracion) {
+    public void setDuracion(String duracion) {
         this.duracion = duracion;
     }
 
@@ -80,11 +74,11 @@ public class BusquedaCancionDTO {
         this.nombreArtista = nombreArtista;
     }
 
-    public LocalDate getFechaPublicacion() {
+    public String getFechaPublicacion() {
         return fechaPublicacion;
     }
 
-    public void setFechaPublicacion(LocalDate fechaPublicacion) {
+    public void setFechaPublicacion(String fechaPublicacion) {
         this.fechaPublicacion = fechaPublicacion;
     }
 
@@ -96,6 +90,14 @@ public class BusquedaCancionDTO {
         this.nombreAlbum = nombreAlbum;
     }
 
+    public String getCategoriaMusical() {
+        return categoriaMusical;
+    }
+
+    public void setCategoriaMusical(String categoriaMusical) {
+        this.categoriaMusical = categoriaMusical;
+    }
     
     
-}
+
+}    

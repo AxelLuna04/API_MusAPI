@@ -4,7 +4,6 @@
  */
 package com.musapi.dto;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -14,11 +13,14 @@ import java.util.List;
 public class BusquedaAlbumDTO {
     private String nombreAlbum;
     private String nombreArtista;
-    private LocalDate fechaPublicacion;
+    private String fechaPublicacion;
     private String urlFoto;
     private List<BusquedaCancionDTO> canciones;
 
-    public BusquedaAlbumDTO(String nombreAlbum, String nombreArtista, LocalDate fechaPublicacion, String urlFoto, List<BusquedaCancionDTO> canciones) {
+    public BusquedaAlbumDTO() {
+    }
+
+    public BusquedaAlbumDTO(String nombreAlbum, String nombreArtista, String fechaPublicacion, String urlFoto, List<BusquedaCancionDTO> canciones) {
         this.nombreAlbum = nombreAlbum;
         this.nombreArtista = nombreArtista;
         this.fechaPublicacion = fechaPublicacion;
@@ -26,6 +28,8 @@ public class BusquedaAlbumDTO {
         this.canciones = canciones;
     }
 
+    
+    
     public String getNombreAlbum() {
         return nombreAlbum;
     }
@@ -42,11 +46,11 @@ public class BusquedaAlbumDTO {
         this.nombreArtista = nombreArtista;
     }
 
-    public LocalDate getFechaPublicacion() {
+    public String getFechaPublicacion() {
         return fechaPublicacion;
     }
 
-    public void setFechaPublicacion(LocalDate fechaPublicacion) {
+    public void setFechaPublicacion(String fechaPublicacion) {
         this.fechaPublicacion = fechaPublicacion;
     }
 

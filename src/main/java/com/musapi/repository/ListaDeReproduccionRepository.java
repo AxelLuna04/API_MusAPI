@@ -5,6 +5,8 @@
 package com.musapi.repository;
 
 import com.musapi.model.ListaDeReproduccion;
+import com.musapi.model.Usuario;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -12,5 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author axell
  */
 public interface ListaDeReproduccionRepository extends JpaRepository<ListaDeReproduccion, Integer>{
-    
+    ListaDeReproduccion findByIdListaDeReproduccion(Integer idListaDeReproduccion);
+    List<ListaDeReproduccion> findByUsuario(Usuario usuario);
+
 }

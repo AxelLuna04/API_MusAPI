@@ -4,12 +4,21 @@
  */
 package com.musapi.service;
 
+import com.musapi.dto.BusquedaCancionDTO;
 import com.musapi.dto.CreacionListaDeReproduccionDTO;
+import com.musapi.dto.ListaDeReproduccionDTO;
+import com.musapi.dto.ListaDeReproduccion_CancionDTO;
+import com.musapi.model.Cancion;
 import com.musapi.model.ListaDeReproduccion;
+import com.musapi.model.ListaDeReproduccion_Cancion;
 import com.musapi.model.Usuario;
+import com.musapi.repository.CancionRepository;
 import com.musapi.repository.ListaDeReproduccionRepository;
 import com.musapi.repository.UsuarioRepository;
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +34,9 @@ public class ListaDeReproduccionService {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private CancionRepository cancionRepository;
     
     public String crearListaDeReproduccion(CreacionListaDeReproduccionDTO creacionListaDeReproduccionDTO){
         Usuario usuario = usuarioRepository.findByIdUsuario(creacionListaDeReproduccionDTO.getIdUsuario());
@@ -54,6 +66,83 @@ public class ListaDeReproduccionService {
         }
             
         listaDeReproduccionRepository.save(listaDeReproduccion);
-        return "Lista de reproducción creada";
+        return "Lista creada con éxito";
     }
+    
+    public String agregarCancionALista(ListaDeReproduccion_CancionDTO dto) {
+        ListaDeReproduccion lista = listaDeReproduccionRepository.findByIdListaDeReproduccion(dto.getIdListaDeReproduccion());
+        if (lista == null) {
+            return "La lista de reproducción no existe";
+        }
+
+        if (!lista.getUsuario().getIdUsuario().equals(dto.getIdUsuario())) {
+            return "La lista no pertenece al usuario";
+        }
+
+        Cancion cancion = cancionRepository.findByIdCancion(dto.getIdCancion());
+        if (cancion == null) {
+            return "La canción no existe";
+        }
+
+        boolean yaExiste = lista.getListaDeReproduccion_CancionList().stream()
+            .anyMatch(rel -> rel.getCancion().getIdCancion().equals(dto.getIdCancion()));
+
+        if (yaExiste) {
+            return "La canción ya está en la lista";
+        }
+
+        ListaDeReproduccion_Cancion relacion = new ListaDeReproduccion_Cancion();
+        relacion.setCancion(cancion);
+        relacion.setListaDeReproduccion(lista);
+        relacion.setPosicionCancion(lista.getListaDeReproduccion_CancionList().size() + 1);
+
+        lista.getListaDeReproduccion_CancionList().add(relacion);
+        listaDeReproduccionRepository.save(lista);
+
+        return "Canción agregada correctamente";
+    }
+    
+    public List<ListaDeReproduccionDTO> obtenerListaDeReproduccionPorIdUsuario(Integer idUsuario){
+        Usuario usuario = usuarioRepository.findByIdUsuario(idUsuario);
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        List<ListaDeReproduccion> listas = listaDeReproduccionRepository.findByUsuario(usuario);
+
+        return listas.stream().map(lista -> {
+            ListaDeReproduccionDTO dto = new ListaDeReproduccionDTO();
+            dto.setIdListaDeReproduccion(lista.getIdListaDeReproduccion());
+            dto.setNombre(lista.getNombre());
+            dto.setUrlFoto(lista.getUrlFoto());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+    
+    public List<BusquedaCancionDTO> obtenerCancionesPorIdListaDeReproduccion(Integer idListaDeReproduccion) {
+        ListaDeReproduccion lista = listaDeReproduccionRepository.findByIdListaDeReproduccion(idListaDeReproduccion);
+
+        if (lista == null) {
+            throw new IllegalArgumentException("La lista de reproducción no existe.");
+        }
+
+        return lista.getListaDeReproduccion_CancionList().stream()
+            .sorted(Comparator.comparingInt(ListaDeReproduccion_Cancion::getPosicionCancion))
+            .map(relacion -> {
+                Cancion cancion = relacion.getCancion();
+                BusquedaCancionDTO dto = new BusquedaCancionDTO();
+                dto.setNombre(cancion.getNombre());
+                dto.setDuracion(cancion.getDuracion().toString());
+                dto.setUrlArchivo(cancion.getUrlArchivo());
+                dto.setUrlFoto(cancion.getUrlFoto());
+                dto.setNombreArtista(cancion.getPerfilArtista_CancionList().get(0).getPerfilArtista().getUsuario().getNombreUsuario());
+                dto.setFechaPublicacion(cancion.getFechaPublicacion().toString());
+                dto.setNombreAlbum(cancion.getAlbum().getNombre());
+                dto.setCategoriaMusical(cancion.getCategoriaMusical().getNombre());
+                return dto;
+            })
+            .collect(Collectors.toList());
+    }
+
+
 }

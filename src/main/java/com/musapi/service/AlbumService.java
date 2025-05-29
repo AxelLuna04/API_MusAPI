@@ -4,6 +4,7 @@
  */
 package com.musapi.service;
 
+import com.musapi.controller.InfoAlbumDTO;
 import com.musapi.dto.AlbumDTO;
 import com.musapi.dto.BusquedaAlbumDTO;
 import com.musapi.dto.BusquedaCancionDTO;
@@ -44,14 +45,14 @@ public class AlbumService {
                                 String nombreArtistaCancion = cancion.getPerfilArtista_CancionList().get(0).getPerfilArtista().getUsuario().getNombreUsuario();
                                 
                                 return new BusquedaCancionDTO(
-                                        cancion.getIdCancion(),
                                         cancion.getNombre(),
-                                        cancion.getDuracion(),
+                                        cancion.getDuracion().toString(),
                                         cancion.getUrlArchivo(),
                                         cancion.getUrlFoto(),
                                         nombreArtistaCancion,
-                                        cancion.getFechaPublicacion(),
-                                        cancion.getAlbum().getNombre()
+                                        cancion.getFechaPublicacion().toString(),
+                                        cancion.getAlbum().getNombre(),
+                                        cancion.getCategoriaMusical().getNombre()
                                 );
                             })
                             .collect(Collectors.toList());
@@ -59,7 +60,7 @@ public class AlbumService {
                     return new BusquedaAlbumDTO(
                         album.getNombre(),
                         nombreArtistaAlbum,
-                        album.getFechaPublicacion(),
+                        album.getFechaPublicacion().toString(),
                         album.getUrlFoto(),
                         cancionesDeAlbum
                     );
@@ -103,5 +104,18 @@ public class AlbumService {
         albumRepository.save(album);
     }
 
-    
+    public List<InfoAlbumDTO> obtenerInfoAlbumesPublicos() {
+        List<Album> albumesPublicos = albumRepository.findByEstado("publico");
+
+        return albumesPublicos.stream().map(album -> {
+            InfoAlbumDTO dto = new InfoAlbumDTO();
+            dto.setIdAlbum(album.getIdAlbum());
+            dto.setNombreArtista(album.getPerfilArtista().getUsuario().getNombreUsuario());
+            dto.setNombre(album.getNombre());
+            dto.setUrlFoto(album.getUrlFoto());
+            dto.setFechaPublicacion(album.getFechaPublicacion().toString());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 }

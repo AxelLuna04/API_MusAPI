@@ -108,4 +108,24 @@ public class CancionController {
         }
     }
     
+    @GetMapping("/album/{idAlbum}/canciones")
+    public ResponseEntity<RespuestaDTO<List<BusquedaCancionDTO>>> obtenerCancionesPorAlbum(@PathVariable Integer idAlbum) {
+        try {
+            List<BusquedaCancionDTO> canciones = cancionService.obtenerCancionesPorIdAlbum(idAlbum);
+
+            if (canciones.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new RespuestaDTO<>("No se encontraron canciones para este álbum", canciones));
+            }
+
+            return ResponseEntity.ok(new RespuestaDTO<>("Canciones del álbum obtenidas exitosamente", canciones));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(new RespuestaDTO<>(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RespuestaDTO<>("Error al obtener las canciones del álbum", null));
+        }
+    }
+
 }

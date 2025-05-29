@@ -65,5 +65,22 @@ public class AlbumController {
         }
     }
 
+    @GetMapping("/publicos")
+    public ResponseEntity<RespuestaDTO<List<InfoAlbumDTO>>> obtenerInfoAlbumesPublicos() {
+        try {
+            List<InfoAlbumDTO> albumes = albumService.obtenerInfoAlbumesPublicos();
+
+            if (albumes.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>("No hay álbumes públicos disponibles", albumes));
+            }
+
+            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes públicos recuperados exitosamente", albumes));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes públicos", null));
+        }
+    }
 
 }

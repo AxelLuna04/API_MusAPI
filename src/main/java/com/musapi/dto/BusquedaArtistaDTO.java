@@ -27,6 +27,11 @@ public class BusquedaArtistaDTO {
         this.canciones = canciones;
     }
 
+    public BusquedaArtistaDTO() {
+    }
+    
+    
+
     public Integer getIdArtista() {
         return idArtista;
     }

@@ -9,6 +9,7 @@ import com.musapi.dto.EdicionPerfilDTO;
 import com.musapi.dto.LoginRequest;
 import com.musapi.dto.PerfilArtistaDTO;
 import com.musapi.dto.RespuestaDTO;
+import com.musapi.dto.UsuarioDTO;
 import com.musapi.model.Usuario;
 import com.musapi.repository.UsuarioRepository;
 import com.musapi.security.JwtUtils;
@@ -111,7 +112,7 @@ public class UsuarioController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<RespuestaDTO<String>> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<RespuestaDTO<UsuarioDTO>> login(@RequestBody LoginRequest loginRequest) {
         Usuario usuario = usuarioRepository.findByCorreo(loginRequest.getCorreo());
 
         if (usuario == null) {
@@ -125,9 +126,18 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new RespuestaDTO<>("Contraseña incorrecta.", null));
         }
-        
         String token = jwtUtils.generarToken(usuario.getCorreo());
-        return ResponseEntity.ok(new RespuestaDTO<>("Login exitoso.", token));
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setIdUsuario(usuario.getIdUsuario());
+        usuarioDTO.setCorreo(usuario.getCorreo());
+        usuarioDTO.setPais(usuario.getPais());
+        usuarioDTO.setNombre(usuario.getNombre());
+        usuarioDTO.setNombreUsuario(usuario.getNombreUsuario());
+        usuarioDTO.setEsArtista(usuario.getEsArtista());
+        usuarioDTO.setEsAdmin(usuario.getEsAdmin());
+        usuarioDTO.setToken(token);
+        
+        return ResponseEntity.ok(new RespuestaDTO<>("Login exitoso.", usuarioDTO));
     }
 
     

@@ -4,6 +4,7 @@
  */
 package com.musapi.repository;
 
+import com.musapi.model.Album;
 import com.musapi.model.Cancion;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface CancionRepository extends JpaRepository<Cancion, Integer>{
     List<Cancion> findByNombreContainingIgnoreCase(String nombreCancion);
-    Cancion findByIdCancion(Integer idCancion);        
+    Cancion findByIdCancion(Integer idCancion);
+    List<Cancion> findByAlbum(Album album);
 }
