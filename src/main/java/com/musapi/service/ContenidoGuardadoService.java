@@ -24,6 +24,7 @@ import com.musapi.repository.UsuarioRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -119,18 +120,24 @@ public class ContenidoGuardadoService {
             dto.setDuracion(cancion.getDuracion().toString());
             dto.setUrlArchivo(cancion.getUrlArchivo());
             dto.setUrlFoto(cancion.getUrlFoto());
-            if (!cancion.getPerfilArtista_CancionList().isEmpty())
-                dto.setNombreArtista(cancion.getPerfilArtista_CancionList().get(0).getPerfilArtista().getUsuario().getNombreUsuario());
-            else
-                dto.setNombreArtista("Desconocido");
-            dto.setFechaPublicacion(cancion.getFechaPublicacion().toString());
+
+            String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
+                ? "Desconocido"
+                : cancion.getPerfilArtista_CancionList().stream()
+                    .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                    .collect(Collectors.joining(", "));
+
+            dto.setNombreArtista(nombreArtistas);
+            dto.setFechaPublicacion(cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null);
             dto.setNombreAlbum(cancion.getAlbum().getNombre());
             dto.setCategoriaMusical(cancion.getCategoriaMusical().getNombre());
+
             cancionesDTO.add(dto);
         }
 
         return cancionesDTO;
-    }
+}
+
 
     public List<ListaDeReproduccionDTO> obtenerListasGuardadasPorUsuario(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findByIdUsuario(idUsuario);
@@ -162,32 +169,39 @@ public class ContenidoGuardadoService {
             Album album = contenido.getAlbum();
             BusquedaAlbumDTO dto = new BusquedaAlbumDTO();
             List<BusquedaCancionDTO> cancionesDTO = new ArrayList<>();
+
             dto.setNombreAlbum(album.getNombre());
             dto.setNombreArtista(album.getPerfilArtista().getUsuario().getNombreUsuario());
             dto.setFechaPublicacion(album.getFechaPublicacion().toString());
             dto.setUrlFoto(album.getUrlFoto());
-            for(Cancion cancion : album.getCanciones()){
+
+            for (Cancion cancion : album.getCanciones()) {
                 BusquedaCancionDTO cancionDTO = new BusquedaCancionDTO();
                 cancionDTO.setNombre(cancion.getNombre());
                 cancionDTO.setNombreAlbum(cancion.getAlbum().getNombre());
                 cancionDTO.setDuracion(cancion.getDuracion().toString());
                 cancionDTO.setCategoriaMusical(cancion.getCategoriaMusical().getNombre());
                 cancionDTO.setFechaPublicacion(cancion.getFechaPublicacion().toString());
-                if (!cancion.getPerfilArtista_CancionList().isEmpty())
-                    dto.setNombreArtista(cancion.getPerfilArtista_CancionList().get(0).getPerfilArtista().getUsuario().getNombreUsuario());
-                else
-                    dto.setNombreArtista("Desconocido");
                 cancionDTO.setUrlArchivo(cancion.getUrlArchivo());
                 cancionDTO.setUrlFoto(cancion.getUrlFoto());
+
+                String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
+                    ? "Desconocido"
+                    : cancion.getPerfilArtista_CancionList().stream()
+                        .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                        .collect(Collectors.joining(", "));
+
+                cancionDTO.setNombreArtista(nombreArtistas);
                 cancionesDTO.add(cancionDTO);
-                
             }
+
             dto.setCanciones(cancionesDTO);
             albumesDTO.add(dto);
         }
 
         return albumesDTO;
     }
+
 
     public List<BusquedaArtistaDTO> obtenerArtistasGuardadosPorUsuario(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findByIdUsuario(idUsuario);

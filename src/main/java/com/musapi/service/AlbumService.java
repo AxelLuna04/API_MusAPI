@@ -42,14 +42,18 @@ public class AlbumService {
                     
                     List<BusquedaCancionDTO> cancionesDeAlbum = album.getCanciones().stream()
                             .map(cancion -> {
-                                String nombreArtistaCancion = cancion.getPerfilArtista_CancionList().get(0).getPerfilArtista().getUsuario().getNombreUsuario();
+                                String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
+                                        ? null
+                                        : cancion.getPerfilArtista_CancionList().stream()
+                                            .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                                            .collect(Collectors.joining(", "));
                                 
                                 return new BusquedaCancionDTO(
                                         cancion.getNombre(),
                                         cancion.getDuracion().toString(),
                                         cancion.getUrlArchivo(),
                                         cancion.getUrlFoto(),
-                                        nombreArtistaCancion,
+                                        nombreArtistas,
                                         cancion.getFechaPublicacion().toString(),
                                         cancion.getAlbum().getNombre(),
                                         cancion.getCategoriaMusical().getNombre()

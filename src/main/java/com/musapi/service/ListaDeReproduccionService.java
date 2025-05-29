@@ -120,29 +120,37 @@ public class ListaDeReproduccionService {
     }
     
     public List<BusquedaCancionDTO> obtenerCancionesPorIdListaDeReproduccion(Integer idListaDeReproduccion) {
-        ListaDeReproduccion lista = listaDeReproduccionRepository.findByIdListaDeReproduccion(idListaDeReproduccion);
+    ListaDeReproduccion lista = listaDeReproduccionRepository.findByIdListaDeReproduccion(idListaDeReproduccion);
 
-        if (lista == null) {
-            throw new IllegalArgumentException("La lista de reproducción no existe.");
-        }
-
-        return lista.getListaDeReproduccion_CancionList().stream()
-            .sorted(Comparator.comparingInt(ListaDeReproduccion_Cancion::getPosicionCancion))
-            .map(relacion -> {
-                Cancion cancion = relacion.getCancion();
-                BusquedaCancionDTO dto = new BusquedaCancionDTO();
-                dto.setNombre(cancion.getNombre());
-                dto.setDuracion(cancion.getDuracion().toString());
-                dto.setUrlArchivo(cancion.getUrlArchivo());
-                dto.setUrlFoto(cancion.getUrlFoto());
-                dto.setNombreArtista(cancion.getPerfilArtista_CancionList().get(0).getPerfilArtista().getUsuario().getNombreUsuario());
-                dto.setFechaPublicacion(cancion.getFechaPublicacion().toString());
-                dto.setNombreAlbum(cancion.getAlbum().getNombre());
-                dto.setCategoriaMusical(cancion.getCategoriaMusical().getNombre());
-                return dto;
-            })
-            .collect(Collectors.toList());
+    if (lista == null) {
+        throw new IllegalArgumentException("La lista de reproducción no existe.");
     }
+
+    return lista.getListaDeReproduccion_CancionList().stream()
+        .sorted(Comparator.comparingInt(ListaDeReproduccion_Cancion::getPosicionCancion))
+        .map(relacion -> {
+            Cancion cancion = relacion.getCancion();
+
+            String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
+                ? null
+                : cancion.getPerfilArtista_CancionList().stream()
+                    .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                    .collect(Collectors.joining(", "));
+
+            BusquedaCancionDTO dto = new BusquedaCancionDTO();
+            dto.setNombre(cancion.getNombre());
+            dto.setDuracion(cancion.getDuracion().toString());
+            dto.setUrlArchivo(cancion.getUrlArchivo());
+            dto.setUrlFoto(cancion.getUrlFoto());
+            dto.setNombreArtista(nombreArtistas);
+            dto.setFechaPublicacion(cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null);
+            dto.setNombreAlbum(cancion.getAlbum().getNombre());
+            dto.setCategoriaMusical(cancion.getCategoriaMusical().getNombre());
+            return dto;
+        })
+        .collect(Collectors.toList());
+}
+
 
 
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -53,27 +54,8 @@ public class CancionController {
 
     
     @PostMapping("/subir")
-    public ResponseEntity<RespuestaDTO<String>> subirCancion(
-            @RequestParam("nombre") String nombre,
-            @RequestParam("archivoCancion") MultipartFile archivoCancion,
-            @RequestParam("foto") MultipartFile foto,
-            @RequestParam("duracion") String duracionStr,
-            @RequestParam("idCategoriaMusical") Integer idCategoriaMusical,
-            @RequestParam("idAlbum") Integer idAlbum,
-            @RequestParam("posicionEnAlbum") Integer posicionEnAlbum,
-            @RequestParam("idPerfilArtistas") List<Integer> idPerfilArtistas
-    ) {
+    public ResponseEntity<RespuestaDTO<String>> subirCancion(@ModelAttribute CancionDTO cancionDTO) {
         try {
-            CancionDTO cancionDTO = new CancionDTO();
-            cancionDTO.setNombre(nombre);
-            cancionDTO.setDuracionStr(duracionStr);
-            cancionDTO.setArchivoCancion(archivoCancion);
-            cancionDTO.setFoto(foto);
-            cancionDTO.setIdCategoriaMusical(idCategoriaMusical);
-            cancionDTO.setIdAlbum(idAlbum);
-            cancionDTO.setPosicionEnAlbum(posicionEnAlbum);
-            cancionDTO.setIdPerfilArtistas(idPerfilArtistas);
-
             String resultado = cancionService.SubirCancion(cancionDTO);
 
             if (resultado.equals("Cancion registrada exitosamente.")) {

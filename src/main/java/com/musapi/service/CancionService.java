@@ -9,13 +9,17 @@ import com.musapi.dto.CancionDTO;
 import com.musapi.model.Album;
 import com.musapi.model.Cancion;
 import com.musapi.model.CategoriaMusical;
+import com.musapi.model.Notificacion;
 import com.musapi.model.PerfilArtista;
 import com.musapi.model.PerfilArtista_Cancion;
+import com.musapi.model.SolicitudColaboracion;
 import com.musapi.repository.AlbumRepository;
 import com.musapi.repository.CancionRepository;
 import com.musapi.repository.CategoriaMusicalRepository;
+import com.musapi.repository.NotificacionRepository;
 import com.musapi.repository.PerfilArtistaRepository;
 import com.musapi.repository.PerfilArtista_CancionRepository;
+import com.musapi.repository.SolicitudColaboracionRepository;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -46,6 +50,12 @@ public class CancionService {
     private CategoriaMusicalRepository categoriaMusicalRepository;
     
     @Autowired
+    private SolicitudColaboracionRepository solicitudColaboracionRepository;
+    
+    @Autowired
+    private NotificacionRepository notificacionRepository;
+    
+    @Autowired
     private AlbumRepository albumRepository;
     
     public List<BusquedaCancionDTO> buscarCancionesPorNombre(String texto){
@@ -53,16 +63,18 @@ public class CancionService {
         
         return cancionesEncontradas.stream()
                 .map(cancion -> {
-                    String nombreArtista = cancion.getPerfilArtista_CancionList().isEmpty()
-                            ? null
-                            : cancion.getPerfilArtista_CancionList().get(0).getPerfilArtista().getUsuario().getNombreUsuario();
+                    String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
+                    ? null
+                    : cancion.getPerfilArtista_CancionList().stream()
+                        .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                        .collect(Collectors.joining(", "));
                     
                     return new BusquedaCancionDTO(
                             cancion.getNombre(),
                             cancion.getDuracion().toString(),
                             cancion.getUrlArchivo(),
                             cancion.getUrlArchivo(),
-                            nombreArtista,
+                            nombreArtistas,
                             cancion.getFechaPublicacion().toString(),
                             cancion.getAlbum().getNombre(),
                             cancion.getCategoriaMusical().getNombre()
@@ -70,40 +82,38 @@ public class CancionService {
                 })
                 .collect(Collectors.toList());
     }
-    
+
     public String SubirCancion(CancionDTO cancionDTO){
         Cancion cancion = new Cancion();
         LocalTime duracion;
+
         try {
             duracion = LocalTime.parse(cancionDTO.getDuracionStr());
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Formato de fecha inválido.");
+            throw new IllegalArgumentException("Formato de duración inválido.");
         }
+
         cancion.setNombre(cancionDTO.getNombre());
         cancion.setDuracion(duracion);
-        
+
         if (cancionDTO.getArchivoCancion() != null && !cancionDTO.getArchivoCancion().isEmpty()) {
-            String nombreArchivo = "archivo_" + cancionDTO.getIdPerfilArtistas() + cancionDTO.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
+            String nombreArchivo = "archivo_" + cancionDTO.getIdPerfilArtistas() + cancionDTO.getNombre() + "_" + System.currentTimeMillis() + ".mp3";
             String rutaDestino = "uploads/archivos-canciones/" + nombreArchivo;
             java.io.File destino = new java.io.File(rutaDestino);
-            
             destino.getParentFile().mkdirs();
-            
             try {
                 cancionDTO.getArchivoCancion().transferTo(destino);
-                cancion.setUrlFoto("/" + rutaDestino);
+                cancion.setUrlArchivo("/" + rutaDestino);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Error al guardar el archivo.");
+                throw new IllegalArgumentException("Error al guardar el archivo de canción.");
             }
         }
-        
+
         if (cancionDTO.getFoto() != null) {
             String nombreArchivo = "foto_" + cancionDTO.getIdPerfilArtistas() + cancionDTO.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
             String rutaDestino = "uploads/fotos-canciones/" + nombreArchivo;
             java.io.File destino = new java.io.File(rutaDestino);
-            
             destino.getParentFile().mkdirs();
-            
             try {
                 cancionDTO.getFoto().transferTo(destino);
                 cancion.setUrlFoto("/" + rutaDestino);
@@ -111,56 +121,63 @@ public class CancionService {
                 throw new IllegalArgumentException("Error al guardar la imagen.");
             }
         }
-        
+
         CategoriaMusical categoriaMusical = categoriaMusicalRepository.findByIdCategoriaMusical(cancionDTO.getIdCategoriaMusical());
-        
-        if(categoriaMusical == null)
-            return "Categoría musical no encontrada";
-        else
-            cancion.setCategoriaMusical(categoriaMusical);
-        
-        Album album;
-        
-        if(cancionDTO.getIdAlbum() == null)
-            return "Error al transferir el dato";
-        
-        if(cancionDTO.getIdAlbum() != 0){
+        if (categoriaMusical == null) return "Categoría musical no encontrada";
+        cancion.setCategoriaMusical(categoriaMusical);
+
+        Album album = null;
+        if (cancionDTO.getIdAlbum() == null) return "Error al transferir el dato";
+        if (cancionDTO.getIdAlbum() != 0) {
             album = albumRepository.findByIdAlbum(cancionDTO.getIdAlbum());
-            
-            if(album != null){
-                cancion.setAlbum(album);
-                cancion.setPosicionEnAlbum(cancionDTO.getPosicionEnAlbum());
-                cancion.setEstado("pendiente");
-                cancion.setFechaPublicacion(album.getFechaPublicacion());
-            }else{
-                return "Álbum no encontrado";
-            }
-        }else{
+            if (album == null) return "Álbum no encontrado";
+            cancion.setAlbum(album);
+            cancion.setPosicionEnAlbum(cancionDTO.getPosicionEnAlbum());
+        }
+
+        boolean esColaboracion = cancionDTO.getIdPerfilArtistas().size() > 1;
+        if (esColaboracion || album != null) {
+            cancion.setEstado("pendiente");
+            cancion.setFechaPublicacion(null);
+        } else {
             cancion.setEstado("publica");
             cancion.setFechaPublicacion(LocalDate.now());
         }
-        
-        if(cancionDTO.getIdPerfilArtistas().size() > 1){
-            cancion.setEstado("pendiente");
-            cancion.setFechaPublicacion(null);
-        }
-        
+
         cancionRepository.save(cancion);
-        
-        for(Integer idPerfilArtista : cancionDTO.getIdPerfilArtistas()){
-            PerfilArtista perfilArtista = perfilArtistaRepository.findByIdPerfilArtista(idPerfilArtista);
-            
-            if(perfilArtista != null){
-                PerfilArtista_Cancion perfilArtista_Cancion = new PerfilArtista_Cancion();
-                perfilArtista_Cancion.setCancion(cancion);
-                perfilArtista_Cancion.setPerfilArtista(perfilArtista);
-                
-                perfilArtista_CancionRepository.save(perfilArtista_Cancion);
-            }else
-                return "Artista no encontrado";
+
+        List<Integer> idsArtistas = cancionDTO.getIdPerfilArtistas();
+        for (int i = 0; i < idsArtistas.size(); i++) {
+            Integer idPerfilArtista = idsArtistas.get(i);
+            PerfilArtista perfil = perfilArtistaRepository.findByIdPerfilArtista(idPerfilArtista);
+            if (perfil == null) return "Artista no encontrado";
+
+            PerfilArtista_Cancion relacion = new PerfilArtista_Cancion();
+            relacion.setCancion(cancion);
+            relacion.setPerfilArtista(perfil);
+            perfilArtista_CancionRepository.save(relacion);
+
+            if (i != 0) {
+                Notificacion notificacion = new Notificacion();
+                notificacion.setMensaje("Has sido invitado a colaborar en la canción: " + cancion.getNombre());
+                notificacion.setFechaEnvio(LocalDate.now());
+                notificacion.setFueLeida(false);
+                notificacion.setUsuario(perfil.getUsuario());
+
+                notificacionRepository.save(notificacion);
+
+                SolicitudColaboracion solicitud = new SolicitudColaboracion();
+                solicitud.setNotificacion(notificacion);
+                solicitud.setCancion(cancion);
+                solicitud.setEstado("pendiente");
+
+                solicitudColaboracionRepository.save(solicitud);
+            }
         }
+
         return "Cancion registrada exitosamente.";
-    }
+}
+
 
     public boolean editarCancion(Integer idCancion, CancionDTO cancionDTO){
         Cancion cancion = cancionRepository.findById(idCancion)
@@ -240,21 +257,24 @@ public class CancionService {
         List<Cancion> canciones = cancionRepository.findByAlbum(album);
 
         return canciones.stream().map(cancion -> {
-            String nombreArtista = cancion.getPerfilArtista_CancionList().isEmpty()
+            String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
                     ? null
-                    : cancion.getPerfilArtista_CancionList().get(0).getPerfilArtista().getUsuario().getNombreUsuario();
+                    : cancion.getPerfilArtista_CancionList().stream()
+                        .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                        .collect(Collectors.joining(", "));
 
             return new BusquedaCancionDTO(
                     cancion.getNombre(),
                     cancion.getDuracion().toString(),
                     cancion.getUrlArchivo(),
                     cancion.getUrlFoto(),
-                    nombreArtista,
+                    nombreArtistas,
                     cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null,
                     cancion.getAlbum().getNombre(),
                     cancion.getCategoriaMusical().getNombre()
             );
         }).collect(Collectors.toList());
     }
+
 
 }
