@@ -4,7 +4,7 @@
  */
 package com.musapi.service;
 
-import com.musapi.controller.InfoAlbumDTO;
+import com.musapi.dto.InfoAlbumDTO;
 import com.musapi.dto.AlbumDTO;
 import com.musapi.dto.BusquedaAlbumDTO;
 import com.musapi.dto.BusquedaCancionDTO;

@@ -6,6 +6,7 @@ package com.musapi.controller;
 
 import com.musapi.dto.AlbumDTO;
 import com.musapi.dto.BusquedaAlbumDTO;
+import com.musapi.dto.InfoAlbumDTO;
 import com.musapi.dto.RespuestaDTO;
 import com.musapi.service.AlbumService;
 import java.util.List;
