@@ -1,49 +1,60 @@
+version: '3.9'
+
 services:
   api:
-    image: musapi
     build: .
     ports:
       - "8088:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - DB_PASSWORD=Musapi_2025
     depends_on:
       - db
     networks:
-      - api-network
-
+      - backend
 
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       - SA_PASSWORD=Musapi_2025
       - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
     ports:
       - "14330:1433"
     volumes:
       - sql-data:/var/opt/mssql
     networks:
-      - api-network
+      - backend
 
-  dbinit:  # <----- aquí, al mismo nivel que api y db, y dentro de services:
+  dbinit:
     image: mcr.microsoft.com/mssql-tools
     depends_on:
       - db
     entrypoint: >
       bash -c "
-        sleep 30 &&
+        for i in {1..30}; do
+          /opt/mssql-tools/bin/sqlcmd -S db -U SA -P 'Musapi_2025' -Q 'SELECT 1' && break || sleep 1
+        done &&
         /opt/mssql-tools/bin/sqlcmd -S db -U SA -P 'Musapi_2025' -i /sqlscript.sql
       "
     volumes:
       - ./sql/sqlscript.sql:/sqlscript.sql
     networks:
-      - api-network
+      - backend
     restart: "no"
-    # Este servicio se apaga después de ejecutar el script
 
-networks:
-  api-network:
-    driver: bridge
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - api
+    networks:
+      - backend
 
 volumes:
   sql-data:
+
+networks:
+  backend:

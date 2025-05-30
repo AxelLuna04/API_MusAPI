@@ -2,21 +2,21 @@ pipeline {
     agent any
 
     stages {
-        stage('Compilar') {
+        stage('Clonar código') {
             steps {
-                sh 'mvn clean package'
+                git 'https://github.com/AxelLuna04/API_MusAPI.git'
             }
         }
 
-        stage('Construir imagen Docker') {
+        stage('Compilar y construir imagen Docker') {
             steps {
-                sh 'docker build -t api-musica .'
+                sh 'docker compose build'
             }
         }
 
         stage('Levantar contenedores') {
             steps {
-                sh 'docker-compose up -d --build'
+                sh 'docker compose up -d'
             }
         }
     }

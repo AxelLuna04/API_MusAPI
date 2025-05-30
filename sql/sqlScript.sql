@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [MusAPI_DB]    Script Date: 20/05/2025 12:11:51 a. m. ******/
+/****** Object:  Database [MusAPI_DB]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 CREATE DATABASE [MusAPI_DB]
 GO
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
@@ -74,17 +74,17 @@ ALTER DATABASE [MusAPI_DB] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP
 GO
 USE [MusAPI_DB]
 GO
-/****** Object:  User [musapi_user]    Script Date: 20/05/2025 12:11:51 a. m. ******/
+/****** Object:  User [musapi_user]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 CREATE USER [musapi_user] FOR LOGIN [musapi_user] WITH DEFAULT_SCHEMA=[dbo]
 GO
-/****** Object:  User [AdminMusAPI]    Script Date: 20/05/2025 12:11:51 a. m. ******/
+/****** Object:  User [AdminMusAPI]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 CREATE USER [AdminMusAPI] FOR LOGIN [AdminMusAPI] WITH DEFAULT_SCHEMA=[dbo]
 GO
 ALTER ROLE [db_owner] ADD MEMBER [musapi_user]
 GO
 ALTER ROLE [db_owner] ADD MEMBER [AdminMusAPI]
 GO
-/****** Object:  Table [dbo].[Album]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[Album]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -93,15 +93,16 @@ CREATE TABLE [dbo].[Album](
 	[idAlbum] [int] IDENTITY(1,1) NOT NULL,
 	[nombre] [varchar](100) NOT NULL,
 	[fechaPublicacion] [date] NOT NULL,
-	[foto] [varbinary](max) NOT NULL,
+	[urlFoto] [varchar](300) NOT NULL,
 	[idPerfilArtista] [int] NOT NULL,
+	[estado] [varchar](15) NOT NULL,
  CONSTRAINT [PK_Album] PRIMARY KEY CLUSTERED 
 (
 	[idAlbum] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Cancion]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[Cancion]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -109,20 +110,21 @@ GO
 CREATE TABLE [dbo].[Cancion](
 	[idCancion] [int] IDENTITY(1,1) NOT NULL,
 	[nombre] [varchar](100) NOT NULL,
-	[archivo] [varbinary](max) NOT NULL,
+	[urlArchivo] [varchar](300) NOT NULL,
 	[duracion] [time](0) NOT NULL,
 	[fechaPublicacion] [date] NOT NULL,
-	[foto] [varbinary](max) NOT NULL,
+	[urlFoto] [varchar](300) NOT NULL,
 	[idCategoriaMusical] [int] NOT NULL,
 	[idAlbum] [int] NULL,
 	[posicionEnAlbum] [int] NULL,
+	[estado] [varchar](15) NOT NULL,
  CONSTRAINT [PK_Cancion] PRIMARY KEY CLUSTERED 
 (
 	[idCancion] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CategoriaMusical]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[CategoriaMusical]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -137,7 +139,7 @@ CREATE TABLE [dbo].[CategoriaMusical](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ContenidoGuardado]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[ContenidoGuardado]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -155,7 +157,7 @@ CREATE TABLE [dbo].[ContenidoGuardado](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Escucha]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[Escucha]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -172,7 +174,7 @@ CREATE TABLE [dbo].[Escucha](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Evaluacion]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[Evaluacion]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -189,7 +191,7 @@ CREATE TABLE [dbo].[Evaluacion](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ListaDeReproduccion]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[ListaDeReproduccion]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -198,15 +200,15 @@ CREATE TABLE [dbo].[ListaDeReproduccion](
 	[idListaDeReproduccion] [int] IDENTITY(1,1) NOT NULL,
 	[nombre] [varchar](100) NOT NULL,
 	[descripcion] [varchar](300) NOT NULL,
-	[foto] [varbinary](max) NULL,
+	[urlFoto] [varchar](300) NULL,
 	[idUsuario] [int] NOT NULL,
  CONSTRAINT [PK_ListaDeReproduccion] PRIMARY KEY CLUSTERED 
 (
 	[idListaDeReproduccion] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ListaDeReproduccion_Cancion]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[ListaDeReproduccion_Cancion]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -222,7 +224,7 @@ CREATE TABLE [dbo].[ListaDeReproduccion_Cancion](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Notificacion]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[Notificacion]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -239,7 +241,7 @@ CREATE TABLE [dbo].[Notificacion](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[PerfilArtista]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[PerfilArtista]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -247,15 +249,15 @@ GO
 CREATE TABLE [dbo].[PerfilArtista](
 	[idPerfilArtista] [int] IDENTITY(1,1) NOT NULL,
 	[descripcion] [varchar](300) NULL,
-	[foto] [varbinary](max) NULL,
+	[urlFoto] [varchar](300) NULL,
 	[idUsuario] [int] NOT NULL,
  CONSTRAINT [PK_PerfilArtista] PRIMARY KEY CLUSTERED 
 (
 	[idPerfilArtista] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[PerfilArtista_Cancion]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[PerfilArtista_Cancion]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -270,7 +272,22 @@ CREATE TABLE [dbo].[PerfilArtista_Cancion](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Usuario]    Script Date: 20/05/2025 12:11:52 a. m. ******/
+/****** Object:  Table [dbo].[SolicitudColaboracion]    Script Date: 29/05/2025 06:41:29 p. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[SolicitudColaboracion](
+	[idNotificacion] [int] NOT NULL,
+	[idCancion] [int] NOT NULL,
+	[estado] [varchar](15) NOT NULL,
+ CONSTRAINT [PK__Solicitu__AFE1D7E4112D824A] PRIMARY KEY CLUSTERED 
+(
+	[idNotificacion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Usuario]    Script Date: 29/05/2025 06:41:29 p. m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -283,17 +300,34 @@ CREATE TABLE [dbo].[Usuario](
 	[pais] [varchar](100) NOT NULL,
 	[esAdmin] [bit] NOT NULL,
 	[esArtista] [bit] NOT NULL,
+	[contrasenia] [varchar](100) NOT NULL,
  CONSTRAINT [PK_Usuario] PRIMARY KEY CLUSTERED 
 (
 	[idUsuario] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+SET IDENTITY_INSERT [dbo].[CategoriaMusical] ON 
+
+INSERT [dbo].[CategoriaMusical] ([idCategoriaMusical], [nombre], [descripcion]) VALUES (1, N'Metal', N'Sonidos pesados e industriales')
+INSERT [dbo].[CategoriaMusical] ([idCategoriaMusical], [nombre], [descripcion]) VALUES (2, N'Jazz', N'Ejemplo de actualizar una categoria musical')
+INSERT [dbo].[CategoriaMusical] ([idCategoriaMusical], [nombre], [descripcion]) VALUES (3, N'Rock', N'Sonido rítmico reconocido por la predominancia de la guitarra eléctrica, los compases de 4/4 y una estructura verso-estribillo ')
+INSERT [dbo].[CategoriaMusical] ([idCategoriaMusical], [nombre], [descripcion]) VALUES (4, N'Pop', N'Sonidos de gusto popular en 4/4 y estribillos pegajosos')
+SET IDENTITY_INSERT [dbo].[CategoriaMusical] OFF
+GO
 SET IDENTITY_INSERT [dbo].[Usuario] ON 
 
-INSERT [dbo].[Usuario] ([idUsuario], [nombre], [correo], [nombreUsuario], [pais], [esAdmin], [esArtista]) VALUES (1, N'Jarly Hernández', N'jarly@example.com', N'jarly99', N'México', 0, 1)
-INSERT [dbo].[Usuario] ([idUsuario], [nombre], [correo], [nombreUsuario], [pais], [esAdmin], [esArtista]) VALUES (2, N'Axel de Jesus Luna Hernandez', N'axel.lu04@gmail.com', N'AxelLuna', N'Mexico', 1, 0)
+INSERT [dbo].[Usuario] ([idUsuario], [nombre], [correo], [nombreUsuario], [pais], [esAdmin], [esArtista], [contrasenia]) VALUES (1, N'Jarly Hernández', N'jarly@example.com', N'jarly99', N'México', 0, 1, N'Temporal123')
+INSERT [dbo].[Usuario] ([idUsuario], [nombre], [correo], [nombreUsuario], [pais], [esAdmin], [esArtista], [contrasenia]) VALUES (2, N'Axel de Jesus Luna Hernandez', N'axel.lu04@gmail.com', N'AxelLuna', N'Mexico', 1, 0, N'Temporal123')
+INSERT [dbo].[Usuario] ([idUsuario], [nombre], [correo], [nombreUsuario], [pais], [esAdmin], [esArtista], [contrasenia]) VALUES (4, N'Actualizado', N'jarly@example.com', N'jarly99', N'Perú', 0, 1, N'Temporal123')
+INSERT [dbo].[Usuario] ([idUsuario], [nombre], [correo], [nombreUsuario], [pais], [esAdmin], [esArtista], [contrasenia]) VALUES (5, N'Jarly', N'jarly@example.com', N'jarly99', N'México', 0, 1, N'$2a$10$429DxcAOP4O4KZBEzykHfeTVAVJLAQfhevJaU7A7aLBR3sdNnBN6m')
+INSERT [dbo].[Usuario] ([idUsuario], [nombre], [correo], [nombreUsuario], [pais], [esAdmin], [esArtista], [contrasenia]) VALUES (6, N'Ejemplo', N'ejemplo@example.com', N'ejemplito', N'México', 0, 1, N'$2a$10$Xd8gVwHvbFI4UCzBevJt3OvmhPNlPXX2TnCVsswg.CBk0DGTkN2SO')
+INSERT [dbo].[Usuario] ([idUsuario], [nombre], [correo], [nombreUsuario], [pais], [esAdmin], [esArtista], [contrasenia]) VALUES (7, N'Usuario prueba2', N'Usuario prueba2', N'Usuario prueba2', N'Usuario prueba2', 0, 1, N'$2a$10$HobLROubcNXGpAvLvWoASufYZIqDYkWUifEU9LYk6m8.0LbfQqR1W')
 SET IDENTITY_INSERT [dbo].[Usuario] OFF
+GO
+ALTER TABLE [dbo].[SolicitudColaboracion] ADD  CONSTRAINT [DF__Solicitud__estad__17F790F9]  DEFAULT ((0)) FOR [estado]
+GO
+ALTER TABLE [dbo].[Usuario] ADD  DEFAULT ('Temporal123') FOR [contrasenia]
 GO
 ALTER TABLE [dbo].[Album]  WITH CHECK ADD  CONSTRAINT [FK_Album_PerfilArtista] FOREIGN KEY([idPerfilArtista])
 REFERENCES [dbo].[PerfilArtista] ([idPerfilArtista])
@@ -384,6 +418,18 @@ ALTER TABLE [dbo].[PerfilArtista_Cancion]  WITH CHECK ADD  CONSTRAINT [FK_Perfil
 REFERENCES [dbo].[PerfilArtista] ([idPerfilArtista])
 GO
 ALTER TABLE [dbo].[PerfilArtista_Cancion] CHECK CONSTRAINT [FK_PerfilArtista_Cancion_PerfilArtista]
+GO
+ALTER TABLE [dbo].[SolicitudColaboracion]  WITH CHECK ADD  CONSTRAINT [FK_Solicitud_Cancion] FOREIGN KEY([idCancion])
+REFERENCES [dbo].[Cancion] ([idCancion])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[SolicitudColaboracion] CHECK CONSTRAINT [FK_Solicitud_Cancion]
+GO
+ALTER TABLE [dbo].[SolicitudColaboracion]  WITH CHECK ADD  CONSTRAINT [FK_Solicitud_Notificacion] FOREIGN KEY([idNotificacion])
+REFERENCES [dbo].[Notificacion] ([idNotificacion])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[SolicitudColaboracion] CHECK CONSTRAINT [FK_Solicitud_Notificacion]
 GO
 USE [master]
 GO

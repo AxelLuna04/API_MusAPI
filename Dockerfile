@@ -1,14 +1,10 @@
-# Usa una imagen base con Java 17 (compatible con Spring Boot 3+)
-FROM eclipse-temurin:17-jdk-jammy
-
-# Directorio de trabajo en el contenedor
+# Dockerfile en raíz del proyecto
+FROM maven:3.9.4-eclipse-temurin-17 AS builder
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copia el JAR de tu API
-COPY target/api-musapi-0.0.1-SNAPSHOT.jar app.jar
-
-# Puerto que expone la API (debe coincidir con server.port de Spring Boot)
-EXPOSE 8080
-
-# Comando para ejecutar la aplicación con el perfil 'docker'
-ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "app.jar"]
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
