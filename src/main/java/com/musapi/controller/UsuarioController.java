@@ -17,7 +17,6 @@ import com.musapi.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -118,22 +117,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new RespuestaDTO<>("Error interno del servidor. No se pudo crear el perfil de artista.", null)
             );
-        }
-    }
-    
-    @DeleteMapping("/{id}/eliminar-usuario")
-    public ResponseEntity<RespuestaDTO<Void>> eliminarUsuario(
-            @PathVariable Integer id,
-            @RequestParam String motivo) {
-        try {
-            usuarioService.eliminarUsuario(id, motivo);
-            return ResponseEntity.ok(new RespuestaDTO<>("Usuario eliminado correctamente.", null));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Error al eliminar el usuario.", null));
         }
     }
 

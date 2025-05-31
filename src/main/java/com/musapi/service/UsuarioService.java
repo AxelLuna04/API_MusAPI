@@ -33,6 +33,9 @@ public class UsuarioService {
     @Autowired
     private PerfilArtistaRepository perfilArtistaRepository;
     
+    @Autowired
+    private CorreoService correoService;
+    
     @Transactional
     public boolean editarPerfil(Integer idUsuario, EdicionPerfilDTO edicionPerfil) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
@@ -151,23 +154,21 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
     
-    @Autowired
-    private CorreoService correoService;
 
-        @Transactional
-        public void eliminarUsuario(Integer idUsuario, String motivo) {
-            Usuario usuario = usuarioRepository.findById(idUsuario)
-                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+    @Transactional
+    public void eliminarUsuario(Integer idUsuario, String motivo) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
-            String correoDestino = usuario.getCorreo();
-            String nombre = usuario.getNombreUsuario();
+        String correoDestino = usuario.getCorreo();
+        String nombre = usuario.getNombreUsuario();
 
-            String asunto = "Cuenta eliminada de Musapi";
-            String cuerpo = "Hola " + nombre + ",\n\nTu cuenta ha sido eliminada por el siguiente motivo:\n\n"
-                          + motivo + "\n\nSi crees que esto fue un error, por favor contáctanos.\n\nSaludos,\nEquipo de Musapi";
+        String asunto = "Cuenta eliminada de Musapi";
+        String cuerpo = "Hola " + nombre + ",\n\nTu cuenta ha sido eliminada por el siguiente motivo:\n\n"
+                + motivo + "\n\nSi crees que esto fue un error, por favor contáctanos.\n\nSaludos,\nEquipo de Musapi";
 
-            correoService.enviarCorreo(correoDestino, asunto, cuerpo);
-            usuarioRepository.delete(usuario);
+        correoService.enviarCorreo(correoDestino, asunto, cuerpo);
+        usuarioRepository.delete(usuario);
     }
 
 }
