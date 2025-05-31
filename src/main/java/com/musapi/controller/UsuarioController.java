@@ -53,63 +53,6 @@ public class UsuarioController {
             return ResponseEntity.status(500).body(new RespuestaDTO<>("Error al registrar usuario.", null));
         }
     }
-
-
-    @GetMapping
-    public List<Usuario> obtenerUsuarios() {
-        return usuarioRepository.findAll();
-    }
-     
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Integer id) {
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        
-        if(usuario.isPresent()) {
-            return ResponseEntity.ok(usuario.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Integer id, @RequestBody Usuario usuarioActualizado) {
-        return usuarioRepository.findById(id)
-                .map(usuarioExistente -> {
-                    if(usuarioActualizado.getNombre() != null) {
-                        usuarioExistente.setNombre(usuarioActualizado.getNombre());
-                    }
-                    if(usuarioActualizado.getCorreo()!= null) {
-                        usuarioExistente.setCorreo(usuarioActualizado.getCorreo());
-                    }
-                    if(usuarioActualizado.getNombreUsuario()!= null) {
-                        usuarioExistente.setNombreUsuario(usuarioActualizado.getNombreUsuario());
-                    }
-                    if(usuarioActualizado.getPais()!= null) {
-                        usuarioExistente.setPais(usuarioActualizado.getPais());
-                    }
-                    if(usuarioActualizado.getEsAdmin() != null) {
-                        usuarioExistente.setEsAdmin(usuarioActualizado.getEsAdmin());
-                    }
-                    if(usuarioActualizado.getEsArtista()!= null) {
-                        usuarioExistente.setEsArtista(usuarioActualizado.getEsArtista());
-                    }
-                    
-                    return ResponseEntity.ok(usuarioRepository.save(usuarioExistente));
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarUsuario(@PathVariable Integer id) {
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        
-        if(usuario.isPresent()) {
-            usuarioRepository.delete(usuario.get());
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
     
     @PostMapping("/login")
     public ResponseEntity<RespuestaDTO<UsuarioDTO>> login(@RequestBody LoginRequest loginRequest) {
@@ -151,7 +94,6 @@ public class UsuarioController {
         }
     }
 
-    
     @GetMapping("/artistas/buscar")
     public ResponseEntity<RespuestaDTO<List<BusquedaArtistaDTO>>> buscarArtistasPorNombreUsuario(@RequestParam String nombreUsuario) {
         try {
@@ -178,4 +120,21 @@ public class UsuarioController {
             );
         }
     }
+    
+    @DeleteMapping("/{id}/eliminar-usuario")
+    public ResponseEntity<RespuestaDTO<Void>> eliminarUsuario(
+            @PathVariable Integer id,
+            @RequestParam String motivo) {
+        try {
+            usuarioService.eliminarUsuario(id, motivo);
+            return ResponseEntity.ok(new RespuestaDTO<>("Usuario eliminado correctamente.", null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RespuestaDTO<>("Error al eliminar el usuario.", null));
+        }
+    }
+
 }

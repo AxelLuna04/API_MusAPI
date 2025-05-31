@@ -37,6 +37,30 @@ public class Notificacion {
 
     //Getters y setters
 
+    public Integer getIdNotificacion() {
+        return idNotificacion;
+    }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public LocalDate getFechaEnvio() {
+        return fechaEnvio;
+    }
+
+    public Boolean getFueLeida() {
+        return fueLeida;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public SolicitudColaboracion getSolicitudColaboracion() {
+        return solicitudColaboracion;
+    }
+
     public void setIdNotificacion(Integer idNotificacion) {
         this.idNotificacion = idNotificacion;
     }

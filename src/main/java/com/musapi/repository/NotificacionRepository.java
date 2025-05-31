@@ -5,6 +5,7 @@
 package com.musapi.repository;
 
 import com.musapi.model.Notificacion;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -12,5 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author axell
  */
 public interface NotificacionRepository extends JpaRepository<Notificacion, Integer>{
-    
+    List<Notificacion> findByUsuario_IdUsuarioAndFueLeidaFalse(Integer idUsuario);
 }
