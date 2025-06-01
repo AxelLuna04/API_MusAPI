@@ -18,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -83,9 +85,23 @@ public class UsuarioController {
     }
 
     
-    @PutMapping("/{id}/editar-perfil")
-    public ResponseEntity<RespuestaDTO<String>> editarPerfil(@PathVariable Integer id, @RequestBody EdicionPerfilDTO edicionPerfil){
+    @PutMapping(value = "/{id}/editar-perfil", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<RespuestaDTO<String>> editarPerfil(
+    @PathVariable Integer id,
+    @RequestPart(value = "nombre", required = false) String nombre,
+    @RequestPart(value = "nombreUsuario", required = false) String nombreUsuario,
+    @RequestPart(value = "pais", required = false) String pais,
+    @RequestPart(value = "descripcion", required = false) String descripcion,
+    @RequestPart(value = "foto", required = false) MultipartFile foto 
+    ){
         try {
+            EdicionPerfilDTO edicionPerfil = new EdicionPerfilDTO();
+            if (nombre != null) edicionPerfil.setNombre(nombre);
+            if (nombreUsuario != null) edicionPerfil.setNombreUsuario(nombreUsuario);
+            if (pais != null) edicionPerfil.setPais(pais);
+            if (descripcion != null) edicionPerfil.setDescripcion(descripcion);
+            if (foto != null) edicionPerfil.setFoto(foto);
+
             usuarioService.editarPerfil(id, edicionPerfil);
             return ResponseEntity.ok(new RespuestaDTO<>("Perfil editado con éxito.", null));
         } catch (Exception ex) {
