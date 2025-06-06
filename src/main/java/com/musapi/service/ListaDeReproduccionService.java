@@ -15,6 +15,7 @@ import com.musapi.model.Usuario;
 import com.musapi.repository.CancionRepository;
 import com.musapi.repository.ListaDeReproduccionRepository;
 import com.musapi.repository.UsuarioRepository;
+import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
@@ -51,17 +52,22 @@ public class ListaDeReproduccionService {
         listaDeReproduccion.setUsuario(usuario);
         
         if (creacionListaDeReproduccionDTO.getFoto() != null) {
-            String nombreArchivo = "foto_" + usuario.getIdUsuario() + creacionListaDeReproduccionDTO.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
-            String rutaDestino = "uploads/fotos-listasDeReproduccion/" + nombreArchivo;
-            java.io.File destino = new java.io.File(rutaDestino);
-            
-            destino.getParentFile().mkdirs();
-            
+            String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-listasDeReproduccion";
+            File directorio = new File(carpeta);
+
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            String nombreArchivo = "foto_" + creacionListaDeReproduccionDTO.getIdUsuario() + "_" + creacionListaDeReproduccionDTO.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
+            File destino = new File(directorio, nombreArchivo);
+
             try {
                 creacionListaDeReproduccionDTO.getFoto().transferTo(destino);
-                listaDeReproduccion.setUrlFoto("/" + rutaDestino);
+                listaDeReproduccion.setUrlFoto("/uploads/fotos-listasDeReproduccion/" + nombreArchivo);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Error al guardar la imagen.");
+                e.printStackTrace();
+                throw new IllegalArgumentException("Error al guardar la imagen: " + e.getMessage());
             }
         }
             

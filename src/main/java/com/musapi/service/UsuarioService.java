@@ -59,21 +59,25 @@ public class UsuarioService {
 
                 if (edicionPerfil.getFoto() != null && !edicionPerfil.getFoto().isEmpty()) {
                     if (perfil.getUrlFoto() != null) {
-                        String rutaAntigua = perfil.getUrlFoto().replaceFirst("/", "");
+                        String rutaAntigua = System.getProperty("user.dir") + File.separator + perfil.getUrlFoto().replace("/", File.separator);
                         File archivoAntiguo = new File(rutaAntigua);
+
                         if (archivoAntiguo.exists()) {
                             archivoAntiguo.delete();
                         }
                     }
                     String nombreArchivo = "foto_" + usuario.getIdUsuario() + "_" + System.currentTimeMillis() + ".jpg";
-                    String rutaDestino = "uploads/fotos-artistas/" + nombreArchivo;
-                    File destino = new File(rutaDestino);
+                    String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-artistas";
+                    File directorio = new File(carpeta);
+                    if (!directorio.exists()) {
+                        directorio.mkdirs();
+                    }
+                    File destino = new File(directorio, nombreArchivo);
 
-                    destino.getParentFile().mkdirs();
 
                     try {
                         edicionPerfil.getFoto().transferTo(destino);
-                        perfil.setUrlFoto("/" + rutaDestino);
+                        perfil.setUrlFoto("/uploads/fotos-artistas/" + nombreArchivo);
                     } catch (IOException e) {
                         throw new IllegalArgumentException("Error al guardar la nueva imagen.");
                     }
@@ -134,18 +138,24 @@ public class UsuarioService {
         perfil.setUsuario(usuario);
 
         if (perfilArtistaDTO.getFoto() != null) {
-            String nombreArchivo = "foto_" + usuario.getIdUsuario() + "_" + System.currentTimeMillis() + ".jpg";
-            String rutaDestino = "uploads/fotos-artistas/" + nombreArchivo;
-            java.io.File destino = new java.io.File(rutaDestino);
-            
-            destino.getParentFile().mkdirs();
-            
+            String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-artistas";
+            File directorio = new File(carpeta);
+
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            String nombreArchivo = "foto_" + perfilArtistaDTO.getIdUsuario() + "_" + System.currentTimeMillis() + ".jpg";
+            File destino = new File(directorio, nombreArchivo);
+
             try {
                 perfilArtistaDTO.getFoto().transferTo(destino);
-                perfil.setUrlFoto("/" + rutaDestino);
+                perfil.setUrlFoto("/uploads/fotos-artistas/" + nombreArchivo);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Error al guardar la imagen.");
+                e.printStackTrace();
+                throw new IllegalArgumentException("Error al guardar la imagen: " + e.getMessage());
             }
+
         }
           
         perfilArtistaRepository.save(perfil);

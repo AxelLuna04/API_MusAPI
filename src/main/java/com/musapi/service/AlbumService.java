@@ -12,6 +12,7 @@ import com.musapi.model.Album;
 import com.musapi.model.PerfilArtista;
 import com.musapi.repository.AlbumRepository;
 import com.musapi.repository.PerfilArtistaRepository;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -83,23 +84,26 @@ public class AlbumService {
 
         PerfilArtista perfil = perfilArtistaRepository.findById(albumDTO.getIdPerfilArtista())
                 .orElseThrow(() -> new IllegalArgumentException("PerfilArtista no encontrado con id: " + albumDTO.getIdPerfilArtista()));
+        Album album = new Album();
 
         if (albumDTO.getFoto() != null) {
-            String nombreArchivo = "foto_" + albumDTO.getIdPerfilArtista() + albumDTO.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
-            String rutaDestino = "uploads/fotos-albumes/" + nombreArchivo;
-            java.io.File destino = new java.io.File(rutaDestino);
+            String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-albumes";
+            File directorio = new File(carpeta);
             
-            destino.getParentFile().mkdirs();
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            String nombreArchivo = "foto_" + perfil.getIdPerfilArtista() + "_" + albumDTO.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
+            File destino = new File(directorio, nombreArchivo);
             
             try {
                 albumDTO.getFoto().transferTo(destino);
-                perfil.setUrlFoto("/" + rutaDestino);
+                album.setUrlFoto("/uploads/fotos-albumes/" + nombreArchivo);
             } catch (IOException e) {
                 throw new IllegalArgumentException("Error al guardar la imagen.");
             }
         }
-
-        Album album = new Album();
         album.setNombre(albumDTO.getNombre());
         album.setFechaPublicacion(fechaPublicacion);
         album.setPerfilArtista(perfil);

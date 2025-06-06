@@ -98,28 +98,42 @@ public class CancionService {
         cancion.setDuracion(duracion);
 
         if (cancionDTO.getArchivoCancion() != null && !cancionDTO.getArchivoCancion().isEmpty()) {
-            String nombreArchivo = "archivo_" + cancionDTO.getIdPerfilArtistas() + cancionDTO.getNombre() + "_" + System.currentTimeMillis() + ".mp3";
-            String rutaDestino = "uploads/archivos-canciones/" + nombreArchivo;
-            java.io.File destino = new java.io.File(rutaDestino);
-            destino.getParentFile().mkdirs();
+            String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "archivos-canciones";
+            File directorio = new File(carpeta);
+
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            String nombreArchivo = "cancion_" + cancionDTO.getIdPerfilArtistas().get(0) + "_" + cancionDTO.getNombre() + "_" + System.currentTimeMillis() + ".mp3";
+            File destino = new File(directorio, nombreArchivo);
+
             try {
                 cancionDTO.getArchivoCancion().transferTo(destino);
-                cancion.setUrlArchivo("/" + rutaDestino);
+                cancion.setUrlArchivo("/uploads/archivos-canciones/" + nombreArchivo);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Error al guardar el archivo de canción.");
+                e.printStackTrace();
+                throw new IllegalArgumentException("Error al guardar la cancion: " + e.getMessage());
             }
         }
 
         if (cancionDTO.getFoto() != null) {
-            String nombreArchivo = "foto_" + cancionDTO.getIdPerfilArtistas() + cancionDTO.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
-            String rutaDestino = "uploads/fotos-canciones/" + nombreArchivo;
-            java.io.File destino = new java.io.File(rutaDestino);
-            destino.getParentFile().mkdirs();
+            String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-canciones";
+            File directorio = new File(carpeta);
+
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            String nombreArchivo = "foto_cancion_" + cancionDTO.getIdPerfilArtistas().get(0) + "_" + cancionDTO.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
+            File destino = new File(directorio, nombreArchivo);
+
             try {
                 cancionDTO.getFoto().transferTo(destino);
-                cancion.setUrlFoto("/" + rutaDestino);
+                cancion.setUrlArchivo("/uploads/fotos-canciones/" + nombreArchivo);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Error al guardar la imagen.");
+                e.printStackTrace();
+                throw new IllegalArgumentException("Error al guardar la imagen: " + e.getMessage());
             }
         }
 
@@ -201,21 +215,25 @@ public class CancionService {
         
         if (cancionDTO.getFoto() != null && !cancionDTO.getFoto().isEmpty()) {
             if (cancion.getUrlFoto() != null) {
-                String rutaAntigua = cancion.getUrlFoto().replaceFirst("/", "");
+                String rutaAntigua = System.getProperty("user.dir") + File.separator + cancion.getUrlFoto().replace("/", File.separator);
                 File archivoAntiguo = new File(rutaAntigua);
+
                 if (archivoAntiguo.exists()) {
                     archivoAntiguo.delete();
                 }
             }
-            String nombreArchivo = "foto_" + cancionDTO.getIdPerfilArtistas() + cancion.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
-            String rutaDestino = "uploads/fotos-canciones/" + nombreArchivo;
-            File destino = new File(rutaDestino);
+            String nombreArchivo = "foto_cancion_" + cancionDTO.getIdPerfilArtistas().get(0) + cancion.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
+            String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-canciones";
+            File directorio = new File(carpeta);
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+            File destino = new File(directorio, nombreArchivo);
 
-            destino.getParentFile().mkdirs();
 
             try {
                 cancionDTO.getFoto().transferTo(destino);
-                cancion.setUrlFoto("/" + rutaDestino);
+                cancion.setUrlFoto("/uploads/fotos-canciones/" + nombreArchivo);
             } catch (IOException e) {
                 throw new IllegalArgumentException("Error al guardar la nueva imagen.");
             }
@@ -223,21 +241,24 @@ public class CancionService {
         
         if (cancionDTO.getArchivoCancion() != null && !cancionDTO.getArchivoCancion().isEmpty()) {
             if (cancion.getUrlArchivo() != null) {
-                String rutaAntigua = cancion.getUrlArchivo().replaceFirst("/", "");
+                String rutaAntigua = System.getProperty("user.dir") + File.separator + cancion.getUrlArchivo().replace("/", File.separator);
                 File archivoAntiguo = new File(rutaAntigua);
+
                 if (archivoAntiguo.exists()) {
                     archivoAntiguo.delete();
                 }
             }
-            String nombreArchivo = "archivo_" + cancionDTO.getIdPerfilArtistas() + cancion.getNombre() + "_" + System.currentTimeMillis() + ".jpg";
-            String rutaDestino = "uploads/archivos-canciones/" + nombreArchivo;
-            File destino = new File(rutaDestino);
-
-            destino.getParentFile().mkdirs();
+            String nombreArchivo = "cancion_" + cancionDTO.getIdPerfilArtistas().get(0) + cancion.getNombre() + "_" + System.currentTimeMillis() + ".mp3";
+            String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "archivos-canciones";
+            File directorio = new File(carpeta);
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+            File destino = new File(directorio, nombreArchivo);
 
             try {
                 cancionDTO.getArchivoCancion().transferTo(destino);
-                cancion.setUrlArchivo("/" + rutaDestino);
+                cancion.setUrlArchivo("/uploads/archivos-canciones/" + nombreArchivo);
             } catch (IOException e) {
                 throw new IllegalArgumentException("Error al guardar el nuevo archivo.");
             }
