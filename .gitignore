@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Rutas de las imagenes guardadas ###
+/uploads
+
 ### STS ###
 .apt_generated
 .classpath
