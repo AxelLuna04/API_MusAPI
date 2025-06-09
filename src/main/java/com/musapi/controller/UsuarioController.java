@@ -10,13 +10,16 @@ import com.musapi.dto.LoginRequest;
 import com.musapi.dto.PerfilArtistaDTO;
 import com.musapi.dto.RespuestaDTO;
 import com.musapi.dto.UsuarioDTO;
+import com.musapi.model.PerfilArtista;
 import com.musapi.model.Usuario;
+import com.musapi.repository.PerfilArtistaRepository;
 import com.musapi.repository.UsuarioRepository;
 import com.musapi.security.JwtUtils;
 import com.musapi.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @author jarly
  */
 public class UsuarioController {
+    @Autowired
+    private PerfilArtistaRepository perfilArtistaRepository;
+    
     @Autowired
     private UsuarioRepository usuarioRepository;
      
@@ -136,4 +142,15 @@ public class UsuarioController {
         }
     }
 
+    
+    @GetMapping("/artista/{id}")
+    public ResponseEntity<RespuestaDTO<BusquedaArtistaDTO>> obtenerArtistaPorId (@PathVariable Integer id) {
+        try {
+            BusquedaArtistaDTO artista = usuarioService.obtenerArtistaPorId(id);
+            return ResponseEntity.ok(new RespuestaDTO<>("Artista encontrado.", artista));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RespuestaDTO<>("Error al buscar artistas.", null));
+        }
+    }
 }
