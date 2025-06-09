@@ -24,7 +24,7 @@ public class Album {
     @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 
-    @Column(name = "fechaPublicacion", nullable = false)
+    @Column(name = "fechaPublicacion", nullable = true)
     private LocalDate fechaPublicacion;
 
     @Column(name = "urlFoto", length = 300)

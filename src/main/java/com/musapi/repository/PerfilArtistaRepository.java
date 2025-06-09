@@ -5,6 +5,7 @@
 package com.musapi.repository;
 
 import com.musapi.model.PerfilArtista;
+import com.musapi.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -13,4 +14,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface PerfilArtistaRepository extends JpaRepository<PerfilArtista, Integer>{
     PerfilArtista findByIdPerfilArtista(Integer idPerfilArtista);
+    PerfilArtista findByUsuario(Usuario usuario);
 }

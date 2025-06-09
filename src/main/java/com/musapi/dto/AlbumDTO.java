@@ -12,14 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class AlbumDTO {
     private String nombre;
-    private Integer idPerfilArtista;
-    private String fechaPublicacion;
+    private Integer idUsuario;
     private MultipartFile foto;
 
-    public AlbumDTO(String nombre, Integer idPerfilArtista, String fechaPublicacion, MultipartFile foto) {
+    public AlbumDTO(String nombre, Integer idUsuario, MultipartFile foto) {
         this.nombre = nombre;
-        this.idPerfilArtista = idPerfilArtista;
-        this.fechaPublicacion = fechaPublicacion;
+        this.idUsuario = idUsuario;
         this.foto = foto;
     }
 
@@ -31,22 +29,13 @@ public class AlbumDTO {
         this.nombre = nombre;
     }
 
-    public Integer getIdPerfilArtista() {
-        return idPerfilArtista;
+    public Integer getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setIdPerfilArtista(Integer idPerfilArtista) {
-        this.idPerfilArtista = idPerfilArtista;
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
-
-    public String getFechaPublicacion() {
-        return fechaPublicacion;
-    }
-
-    public void setFechaPublicacion(String fechaPublicacion) {
-        this.fechaPublicacion = fechaPublicacion;
-    }
-
     public MultipartFile getFoto() {
         return foto;
     }

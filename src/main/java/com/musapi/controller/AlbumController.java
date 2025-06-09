@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,12 +50,7 @@ public class AlbumController {
     }
     
     @PostMapping("/crear")
-    public ResponseEntity<RespuestaDTO<Void>> crearAlbum(
-            @RequestParam("nombre") String nombre,
-            @RequestParam("idPerfilArtista") Integer idPerfilArtista,
-            @RequestParam("fechaPublicacion") String fechaPublicacionStr,
-            @RequestParam("foto") MultipartFile foto) {
-        AlbumDTO albumDTO = new AlbumDTO(nombre, idPerfilArtista, fechaPublicacionStr, foto);
+    public ResponseEntity<RespuestaDTO<Void>> crearAlbum(@ModelAttribute AlbumDTO albumDTO) {
         try {
             albumService.crearAlbum(albumDTO);
             return ResponseEntity.ok(new RespuestaDTO<>("Álbum creado exitosamente.", null));

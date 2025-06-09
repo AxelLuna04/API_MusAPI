@@ -14,6 +14,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +34,7 @@ public class ListaDeReproduccionController {
     private ListaDeReproduccionService listaDeReproduccionService;
     
     @PostMapping("/crear")
-    public ResponseEntity<RespuestaDTO<String>> crearLista(@RequestBody CreacionListaDeReproduccionDTO dto) {
+    public ResponseEntity<RespuestaDTO<String>> crearLista(@ModelAttribute CreacionListaDeReproduccionDTO dto) {
         try {
             String mensaje = listaDeReproduccionService.crearListaDeReproduccion(dto);
 

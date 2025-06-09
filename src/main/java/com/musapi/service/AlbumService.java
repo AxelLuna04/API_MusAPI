@@ -10,8 +10,10 @@ import com.musapi.dto.BusquedaAlbumDTO;
 import com.musapi.dto.BusquedaCancionDTO;
 import com.musapi.model.Album;
 import com.musapi.model.PerfilArtista;
+import com.musapi.model.Usuario;
 import com.musapi.repository.AlbumRepository;
 import com.musapi.repository.PerfilArtistaRepository;
+import com.musapi.repository.UsuarioRepository;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -33,6 +35,9 @@ public class AlbumService {
     
     @Autowired
     private PerfilArtistaRepository perfilArtistaRepository;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
     
     public List<BusquedaAlbumDTO> buscarAlbumesPorNombre(String texto){
         List<Album> albumesEncontrados = albumRepository.findByNombreContainingIgnoreCase(texto);
@@ -75,15 +80,11 @@ public class AlbumService {
     }
     
     public void crearAlbum(AlbumDTO albumDTO) {
-        LocalDate fechaPublicacion;
-        try {
-            fechaPublicacion = LocalDate.parse(albumDTO.getFechaPublicacion());
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Formato de fecha inválido. Use yyyy-MM-dd.");
-        }
 
-        PerfilArtista perfil = perfilArtistaRepository.findById(albumDTO.getIdPerfilArtista())
-                .orElseThrow(() -> new IllegalArgumentException("PerfilArtista no encontrado con id: " + albumDTO.getIdPerfilArtista()));
+        Usuario usuario = usuarioRepository.findByIdUsuario(albumDTO.getIdUsuario());
+        PerfilArtista perfil = perfilArtistaRepository.findByUsuario(usuario);
+        System.out.println("Nombre artista: " + perfil.getUsuario().getNombreUsuario());
+                
         Album album = new Album();
 
         if (albumDTO.getFoto() != null) {
@@ -105,7 +106,6 @@ public class AlbumService {
             }
         }
         album.setNombre(albumDTO.getNombre());
-        album.setFechaPublicacion(fechaPublicacion);
         album.setPerfilArtista(perfil);
         album.setEstado("pendiente");
 
