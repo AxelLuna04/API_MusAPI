@@ -135,7 +135,7 @@ public class AlbumService {
             dto.setNombreArtista(album.getPerfilArtista().getUsuario().getNombreUsuario());
             dto.setNombre(album.getNombre());
             dto.setUrlFoto(album.getUrlFoto());
-            dto.setFechaPublicacion(album.getFechaPublicacion().toString());
+            //dto.setFechaPublicacion(album.getFechaPublicacion().toString());
             return dto;
         }).collect(Collectors.toList());
     }
