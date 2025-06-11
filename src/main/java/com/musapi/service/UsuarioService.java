@@ -124,7 +124,36 @@ public class UsuarioService {
         }).collect(Collectors.toList());
     }
     
+    public BusquedaArtistaDTO obtenerArtistaPorId(Integer idArtista) {
+        Usuario artista = usuarioRepository.findByIdUsuarioAndEsArtistaTrue(idArtista);
+        PerfilArtista perfil = artista.getPerfilArtista();
 
+        List<BusquedaCancionDTO> canciones = perfil.getPerfilArtista_CancionList().stream()
+                .map(PerfilArtista_Cancion::getCancion)
+                .filter(c -> c.getAlbum() == null)
+                .limit(10)
+                .map(c -> new BusquedaCancionDTO(
+                        c.getNombre(),
+                        c.getDuracion().toString(),
+                        c.getUrlArchivo(),
+                        c.getUrlFoto(),
+                        artista.getNombre(),
+                        c.getFechaPublicacion().toString(),
+                        c.getAlbum() != null ? c.getAlbum().getNombre() : null,
+                        c.getCategoriaMusical().getNombre()
+                ))
+                .collect(Collectors.toList());
+
+        return new BusquedaArtistaDTO(
+                perfil.getIdPerfilArtista(),
+                artista.getNombre(),
+                artista.getNombreUsuario(),
+                perfil.getDescripcion(),
+                perfil.getUrlFoto(),
+                canciones
+        );
+    }
+    
     @Transactional
     public void crearPerfilArtista(PerfilArtistaDTO perfilArtistaDTO) throws Exception {
         Usuario usuario = usuarioRepository.findByIdUsuario(perfilArtistaDTO.getIdUsuario());

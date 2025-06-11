@@ -126,4 +126,18 @@ public class AlbumService {
         }).collect(Collectors.toList());
     }
 
+    public List<InfoAlbumDTO> obtenerInfoAlbumesPendientesPorArtista(int idPerfilArtista) {
+        List<Album> albumesPendientes = albumRepository.findByEstadoAndPerfilArtista_IdPerfilArtista("pendiente", idPerfilArtista);
+        
+        return albumesPendientes.stream().map(album -> {
+          InfoAlbumDTO dto = new InfoAlbumDTO();
+          dto.setIdAlbum(album.getIdAlbum());
+            dto.setNombreArtista(album.getPerfilArtista().getUsuario().getNombreUsuario());
+            dto.setNombre(album.getNombre());
+            dto.setUrlFoto(album.getUrlFoto());
+            //dto.setFechaPublicacion(album.getFechaPublicacion().toString());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+    
 }
