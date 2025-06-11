@@ -79,5 +79,31 @@ public class AlbumController {
                 .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes públicos", null));
         }
     }
+    
+    @GetMapping("/pendientes")
+    public ResponseEntity<RespuestaDTO<List<InfoAlbumDTO>>> obtenerInfoAlbumesPrivados(@RequestParam("idPerfilArtista") int idPerfilArtista) {
+        try {
+            List<InfoAlbumDTO> albumes = albumService.obtenerInfoAlbumesPendientesPorArtista(idPerfilArtista);
+            System.out.println("paso 1\n");
+            if (albumes.isEmpty()) {
+                System.out.println("paso 2\n");
+                
+            System.out.println("Álbumes encontrados: " + albumes.size()); // No recomendado en producción
+            System.out.println("Contenido de albumes: " + albumes);
+            for (InfoAlbumDTO album : albumes) {
+                System.out.println("Álbum: " + album);
+}
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>("No existen álbumes pendientes", albumes));
+            }
+            System.out.println("paso 3\n");
+
+            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes pendientes recuperados exitosamente", albumes));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes pendientes", null));
+        }
+    }
 
 }

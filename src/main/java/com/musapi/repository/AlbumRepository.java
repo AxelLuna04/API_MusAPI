@@ -17,4 +17,5 @@ public interface AlbumRepository extends JpaRepository<Album, Integer>{
     List<Album> findByNombreContainingIgnoreCase(String texto);
     Album findByIdAlbum(Integer idAlbum);
     List<Album> findByEstado(String estado);
+    List<Album> findByEstadoAndPerfilArtista_IdPerfilArtista(String estado, int idPerfilArtista);
 }
