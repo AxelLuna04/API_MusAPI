@@ -85,17 +85,12 @@ public class AlbumController {
         try {
             List<InfoAlbumDTO> albumes = albumService.obtenerInfoAlbumesPendientesPorArtista(idPerfilArtista);
             if (albumes.isEmpty()) {
-                System.out.println("No se encontraron albumes");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new RespuestaDTO<>("No existen álbumes pendientes", albumes));
-            }else{
-                System.out.println("Encontro albumes");
             }
-
             return ResponseEntity.ok(new RespuestaDTO<>("Álbumes pendientes recuperados exitosamente", albumes));
 
         } catch (Exception e) {
-            System.out.println("Entro a la excepcion: "+e );
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes pendientes", null));
         }
