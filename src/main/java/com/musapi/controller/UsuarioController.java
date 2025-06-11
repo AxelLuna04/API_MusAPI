@@ -51,6 +51,8 @@ public class UsuarioController {
     @PostMapping("/registrar")
     public ResponseEntity<RespuestaDTO<Usuario>> registrarUsuario(@RequestBody Usuario usuario) {
         try {
+             usuario.setEsAdmin(false);
+            usuario.setEsArtista(false);
             String contrasenaSinHash = usuario.getContrasenia();
             String contrasenaHasheada = passwordEncoder.encode(contrasenaSinHash);
             usuario.setContrasenia(contrasenaHasheada);
