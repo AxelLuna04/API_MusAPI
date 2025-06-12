@@ -51,12 +51,15 @@ public class UsuarioController {
     @PostMapping("/registrar")
     public ResponseEntity<RespuestaDTO<Usuario>> registrarUsuario(@RequestBody Usuario usuario) {
         try {
+             usuario.setEsAdmin(false);
+            usuario.setEsArtista(false);
             String contrasenaSinHash = usuario.getContrasenia();
             String contrasenaHasheada = passwordEncoder.encode(contrasenaSinHash);
             usuario.setContrasenia(contrasenaHasheada);
             Usuario usuarioGuardado = usuarioRepository.save(usuario);
             return ResponseEntity.ok(new RespuestaDTO<>("Usuario registrado con éxito.", usuarioGuardado));
         } catch (Exception ex) {
+            ex.printStackTrace();
             return ResponseEntity.status(500).body(new RespuestaDTO<>("Error al registrar usuario.", null));
         }
     }
