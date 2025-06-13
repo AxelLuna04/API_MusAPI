@@ -71,6 +71,7 @@ public class CancionService {
                         .collect(Collectors.joining(", "));
                     
                     return new BusquedaCancionDTO(
+                            cancion.getIdCancion(),
                             cancion.getNombre(),
                             cancion.getDuracion().toString(),
                             cancion.getUrlArchivo(),
@@ -84,7 +85,7 @@ public class CancionService {
                 .collect(Collectors.toList());
     }
 
-    public String SubirCancion(CancionDTO cancionDTO){
+    public String SubirCancion(CancionDTO cancionDTO){ 
         Cancion cancion = new Cancion();
         LocalTime duracion;
 
@@ -97,7 +98,7 @@ public class CancionService {
         cancion.setNombre(cancionDTO.getNombre());
         cancion.setDuracion(duracion);
 
-        if (cancionDTO.getArchivoCancion() != null && !cancionDTO.getArchivoCancion().isEmpty()) {
+        if (cancionDTO.getArchivoCancion() != null && !cancionDTO.getArchivoCancion().isEmpty()) { 
             String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "archivos-canciones";
             File directorio = new File(carpeta);
 
@@ -117,7 +118,7 @@ public class CancionService {
             }
         }
 
-        if (cancionDTO.getFoto() != null) {
+        if (cancionDTO.getUrlFoto() != null) { 
             String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-canciones";
             File directorio = new File(carpeta);
 
@@ -129,8 +130,8 @@ public class CancionService {
             File destino = new File(directorio, nombreArchivo);
 
             try {
-                cancionDTO.getFoto().transferTo(destino);
-                cancion.setUrlArchivo("/uploads/fotos-canciones/" + nombreArchivo);
+                cancionDTO.getUrlFoto().transferTo(destino);
+                cancion.setUrlFoto("/uploads/fotos-canciones/" + nombreArchivo);
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new IllegalArgumentException("Error al guardar la imagen: " + e.getMessage());
@@ -147,7 +148,7 @@ public class CancionService {
             album = albumRepository.findByIdAlbum(cancionDTO.getIdAlbum());
             if (album == null) return "Álbum no encontrado";
             cancion.setAlbum(album);
-            cancion.setPosicionEnAlbum(cancionDTO.getPosicionEnAlbum());
+            cancion.setPosicionEnAlbum(album.getTotalCanciones()+1);
         }
 
         boolean esColaboracion = cancionDTO.getIdPerfilArtistas().size() > 1;
@@ -213,7 +214,7 @@ public class CancionService {
             cancion.setCategoriaMusical(categoriaMusical);
         }
         
-        if (cancionDTO.getFoto() != null && !cancionDTO.getFoto().isEmpty()) {
+        if (cancionDTO.getUrlFoto() != null && !cancionDTO.getUrlFoto().isEmpty()) {
             if (cancion.getUrlFoto() != null) {
                 String rutaAntigua = System.getProperty("user.dir") + File.separator + cancion.getUrlFoto().replace("/", File.separator);
                 File archivoAntiguo = new File(rutaAntigua);
@@ -232,7 +233,7 @@ public class CancionService {
 
 
             try {
-                cancionDTO.getFoto().transferTo(destino);
+                cancionDTO.getUrlFoto().transferTo(destino);
                 cancion.setUrlFoto("/uploads/fotos-canciones/" + nombreArchivo);
             } catch (IOException e) {
                 throw new IllegalArgumentException("Error al guardar la nueva imagen.");
@@ -286,6 +287,7 @@ public class CancionService {
                         .collect(Collectors.joining(", "));
 
             return new BusquedaCancionDTO(
+                    cancion.getIdCancion(),
                     cancion.getNombre(),
                     cancion.getDuracion().toString(),
                     cancion.getUrlArchivo(),

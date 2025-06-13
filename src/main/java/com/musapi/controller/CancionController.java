@@ -54,10 +54,9 @@ public class CancionController {
 
     
     @PostMapping("/subir")
-    public ResponseEntity<RespuestaDTO<String>> subirCancion(@ModelAttribute CancionDTO cancionDTO) {
-        try {
-            String resultado = cancionService.SubirCancion(cancionDTO);
-
+    public ResponseEntity<RespuestaDTO<String>> subirCancion(@ModelAttribute CancionDTO cancionDTO) { 
+        try { 
+            String resultado = cancionService.SubirCancion(cancionDTO); 
             if (resultado.equals("Cancion registrada exitosamente.")) {
                 return ResponseEntity.ok(new RespuestaDTO<>(resultado, null));
             } else {
@@ -66,7 +65,7 @@ public class CancionController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RespuestaDTO<>("El sistema falló al conectarse a la base de datos.", null));
+                .body(new RespuestaDTO<>("Error al subir la canción: "+e.getMessage(), null));
         }
     }
 
@@ -75,13 +74,13 @@ public class CancionController {
             @PathVariable Integer idCancion,
             @RequestParam String nombre,
             @RequestParam MultipartFile archivoCancion,
-            @RequestParam MultipartFile foto,
+            @RequestParam MultipartFile urlFoto,
             @RequestParam String duracionStr,
             @RequestParam Integer idCategoriaMusical,
             @RequestParam Integer idAlbum,
             @RequestParam Integer posicionEnAlbum
     ){
-        CancionDTO cancionDTO = new CancionDTO(nombre, archivoCancion, foto, duracionStr, idCategoriaMusical, idAlbum, posicionEnAlbum, null);
+        CancionDTO cancionDTO = new CancionDTO(nombre, archivoCancion, urlFoto, duracionStr, idCategoriaMusical, idAlbum, posicionEnAlbum, null);
         try {
             cancionService.editarCancion(idCancion, cancionDTO);
             return ResponseEntity.ok(new RespuestaDTO<>("Cancion editada con éxito.", null));

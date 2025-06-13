@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CancionDTO {
     private String nombre;
     private MultipartFile archivoCancion;
-    private MultipartFile foto;
+    private MultipartFile urlFoto;
     private String duracionStr;
     private Integer idCategoriaMusical;
     private Integer idAlbum;
@@ -25,10 +25,10 @@ public class CancionDTO {
     }
 
     
-    public CancionDTO(String nombre, MultipartFile archivoCancion, MultipartFile foto, String duracionStr, Integer idCategoriaMusical, Integer idAlbum, Integer posicionEnAlbum, List<Integer> idPerfilArtistas) {
+    public CancionDTO(String nombre, MultipartFile archivoCancion, MultipartFile urlFoto, String duracionStr, Integer idCategoriaMusical, Integer idAlbum, Integer posicionEnAlbum, List<Integer> idPerfilArtistas) {
         this.nombre = nombre;
         this.archivoCancion = archivoCancion;
-        this.foto = foto;
+        this.urlFoto = urlFoto;
         this.duracionStr = duracionStr;
         this.idCategoriaMusical = idCategoriaMusical;
         this.idAlbum = idAlbum;
@@ -52,12 +52,12 @@ public class CancionDTO {
         this.archivoCancion = archivoCancion;
     }
 
-    public MultipartFile getFoto() {
-        return foto;
+    public MultipartFile getUrlFoto() {
+        return urlFoto;
     }
 
-    public void setFoto(MultipartFile foto) {
-        this.foto = foto;
+    public void setUrlFoto(MultipartFile urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     public String getDuracionStr() {

@@ -9,6 +9,7 @@ package com.musapi.dto;
  * @author axell
  */
 public class BusquedaCancionDTO {
+    private Integer idCancion;
     private String nombre;
     private String duracion;
     private String urlArchivo;
@@ -18,7 +19,8 @@ public class BusquedaCancionDTO {
     private String nombreAlbum;
     private String categoriaMusical;
 
-    public BusquedaCancionDTO(String nombre, String duracion, String urlArchivo, String urlFoto, String nombreArtista, String fechaPublicacion, String nombreAlbum, String categoriaMusical) {
+    public BusquedaCancionDTO(Integer idCancion, String nombre, String duracion, String urlArchivo, String urlFoto, String nombreArtista, String fechaPublicacion, String nombreAlbum, String categoriaMusical) {
+        this.idCancion = idCancion;
         this.nombre = nombre;
         this.duracion = duracion;
         this.urlArchivo = urlArchivo;
@@ -31,9 +33,15 @@ public class BusquedaCancionDTO {
 
     public BusquedaCancionDTO() {
     }
-    
-    
 
+    public Integer getIdCancion() {
+        return idCancion;
+    }
+
+    public void setIdCancion(Integer idCancion) {
+        this.idCancion = idCancion;
+    }
+    
     public String getNombre() {
         return nombre;
     }

@@ -43,6 +43,10 @@ public class Album {
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContenidoGuardado> contenidosGuardados = new ArrayList<>();
     
+    public int getTotalCanciones() {
+        return canciones != null ? canciones.size() : 0;
+    }
+    
     //getters y setters
 
     public Integer getIdAlbum() {

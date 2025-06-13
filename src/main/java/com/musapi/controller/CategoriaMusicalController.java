@@ -4,11 +4,15 @@
  */
 package com.musapi.controller;
 
+import com.musapi.dto.CategoriaMusicalDTO;
+import com.musapi.dto.RespuestaDTO;
 import com.musapi.model.CategoriaMusical;
 import com.musapi.repository.CategoriaMusicalRepository;
+import com.musapi.service.CategoriaMusicalService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,14 +34,30 @@ public class CategoriaMusicalController {
     @Autowired
     private CategoriaMusicalRepository categoriaMusicalRepository;
     
+    @Autowired
+    private CategoriaMusicalService categoriaMusicalService;
+    
     @PostMapping ("/registrar")
     public CategoriaMusical registrarCategoriaMusical (@RequestBody CategoriaMusical categoriaMusical) {
         return categoriaMusicalRepository.save(categoriaMusical);
     }
     
     @GetMapping
-    public List<CategoriaMusical> obtenerUsuarios() {
-        return categoriaMusicalRepository.findAll();
+    public ResponseEntity<RespuestaDTO<List<CategoriaMusicalDTO>>> obtenerCategorias() {
+        try {
+            List<CategoriaMusicalDTO> resultados = categoriaMusicalService.obtenerCategorias();
+
+            if (resultados.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>("No se encontraron categorías", resultados));
+            }
+
+            return ResponseEntity.ok(new RespuestaDTO<>("Categorias encontradas exitosamente", resultados));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Ocurrió un error al buscar las categorias musicales", null));
+        }
     }
     
     @GetMapping("/{id}")

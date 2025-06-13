@@ -116,6 +116,7 @@ public class ContenidoGuardadoService {
         for (ContenidoGuardado contenido : guardados) {
             Cancion cancion = contenido.getCancion();
             BusquedaCancionDTO dto = new BusquedaCancionDTO();
+            dto.setIdCancion(cancion.getIdCancion());
             dto.setNombre(cancion.getNombre());
             dto.setDuracion(cancion.getDuracion().toString());
             dto.setUrlArchivo(cancion.getUrlArchivo());
@@ -170,6 +171,7 @@ public class ContenidoGuardadoService {
             BusquedaAlbumDTO dto = new BusquedaAlbumDTO();
             List<BusquedaCancionDTO> cancionesDTO = new ArrayList<>();
 
+            dto.setIdAlbum(album.getIdAlbum());
             dto.setNombreAlbum(album.getNombre());
             dto.setNombreArtista(album.getPerfilArtista().getUsuario().getNombreUsuario());
             dto.setFechaPublicacion(album.getFechaPublicacion().toString());
@@ -177,6 +179,7 @@ public class ContenidoGuardadoService {
 
             for (Cancion cancion : album.getCanciones()) {
                 BusquedaCancionDTO cancionDTO = new BusquedaCancionDTO();
+                cancionDTO.setIdCancion(cancion.getIdCancion());
                 cancionDTO.setNombre(cancion.getNombre());
                 cancionDTO.setNombreAlbum(cancion.getAlbum().getNombre());
                 cancionDTO.setDuracion(cancion.getDuracion().toString());

@@ -32,7 +32,7 @@ public class Cancion {
     @Column(name = "duracion", nullable = false)
     private LocalTime duracion;
 
-    @Column(name = "fechaPublicacion", nullable = false)
+    @Column(name = "fechaPublicacion", nullable = true)
     private LocalDate fechaPublicacion;
 
     @Column(name = "estado", length = 15, nullable = false)

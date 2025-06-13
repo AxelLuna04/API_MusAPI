@@ -35,12 +35,10 @@ public class AlbumController {
     public ResponseEntity<RespuestaDTO<List<BusquedaAlbumDTO>>> buscarAlbumes(@RequestParam("texto") String texto) {
         try {
             List<BusquedaAlbumDTO> resultados = albumService.buscarAlbumesPorNombre(texto);
-
             if (resultados.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new RespuestaDTO<>("No se encontraron álbumes", resultados));
             }
-
             return ResponseEntity.ok(new RespuestaDTO<>("Álbumes encontrados exitosamente", resultados));
 
         } catch (Exception e) {

@@ -102,6 +102,7 @@ public class UsuarioService {
                     .filter(c -> c.getAlbum() == null)
                     .limit(10)
                     .map(c -> new BusquedaCancionDTO(
+                            c.getIdCancion(),
                             c.getNombre(),
                             c.getDuracion().toString(),
                             c.getUrlArchivo(),
@@ -133,6 +134,7 @@ public class UsuarioService {
                 .filter(c -> c.getAlbum() == null)
                 .limit(10)
                 .map(c -> new BusquedaCancionDTO(
+                        c.getIdCancion(),
                         c.getNombre(),
                         c.getDuracion().toString(),
                         c.getUrlArchivo(),

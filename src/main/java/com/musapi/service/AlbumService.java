@@ -21,6 +21,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,8 +41,7 @@ public class AlbumService {
     private UsuarioRepository usuarioRepository;
     
     public List<BusquedaAlbumDTO> buscarAlbumesPorNombre(String texto){
-        List<Album> albumesEncontrados = albumRepository.findByNombreContainingIgnoreCase(texto);
-        
+        List<Album> albumesEncontrados = albumRepository.findByNombreContainingIgnoreCaseAndEstado(texto, "publico");
         return albumesEncontrados.stream()
                 .map(album -> {
                     String nombreArtistaAlbum = album.getPerfilArtista().getUsuario().getNombreUsuario();
@@ -55,6 +55,7 @@ public class AlbumService {
                                             .collect(Collectors.joining(", "));
                                 
                                 return new BusquedaCancionDTO(
+                                        cancion.getIdCancion(),
                                         cancion.getNombre(),
                                         cancion.getDuracion().toString(),
                                         cancion.getUrlArchivo(),
@@ -68,6 +69,7 @@ public class AlbumService {
                             .collect(Collectors.toList());
                     
                     return new BusquedaAlbumDTO(
+                        album.getIdAlbum(),
                         album.getNombre(),
                         nombreArtistaAlbum,
                         album.getFechaPublicacion().toString(),

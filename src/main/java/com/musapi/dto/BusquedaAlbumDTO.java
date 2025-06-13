@@ -11,6 +11,7 @@ import java.util.List;
  * @author axell
  */
 public class BusquedaAlbumDTO {
+    private Integer idAlbum;
     private String nombreAlbum;
     private String nombreArtista;
     private String fechaPublicacion;
@@ -20,7 +21,8 @@ public class BusquedaAlbumDTO {
     public BusquedaAlbumDTO() {
     }
 
-    public BusquedaAlbumDTO(String nombreAlbum, String nombreArtista, String fechaPublicacion, String urlFoto, List<BusquedaCancionDTO> canciones) {
+    public BusquedaAlbumDTO(Integer idAlbum, String nombreAlbum, String nombreArtista, String fechaPublicacion, String urlFoto, List<BusquedaCancionDTO> canciones) {
+        this.idAlbum = idAlbum;
         this.nombreAlbum = nombreAlbum;
         this.nombreArtista = nombreArtista;
         this.fechaPublicacion = fechaPublicacion;
@@ -28,7 +30,13 @@ public class BusquedaAlbumDTO {
         this.canciones = canciones;
     }
 
-    
+    public Integer getIdAlbum() {
+        return idAlbum;
+    }
+
+    public void setIdAlbum(Integer idAlbum) {
+        this.idAlbum = idAlbum;
+    }
     
     public String getNombreAlbum() {
         return nombreAlbum;

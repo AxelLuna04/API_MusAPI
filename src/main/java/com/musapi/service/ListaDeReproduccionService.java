@@ -144,6 +144,7 @@ public class ListaDeReproduccionService {
                     .collect(Collectors.joining(", "));
 
             BusquedaCancionDTO dto = new BusquedaCancionDTO();
+            dto.setIdCancion(cancion.getIdCancion());
             dto.setNombre(cancion.getNombre());
             dto.setDuracion(cancion.getDuracion().toString());
             dto.setUrlArchivo(cancion.getUrlArchivo());
