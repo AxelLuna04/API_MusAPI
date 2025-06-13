@@ -40,7 +40,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             sesiones.add(session);
         }
 
-        String jsonRespuesta = mapper.writeValueAsString(new ChatMessageDTO(msg.getNombreUsuario(), msg.getMensaje()));
+        String jsonRespuesta = mapper.writeValueAsString(new ChatMessage(msg.getNombreUsuario(), msg.getMensaje(), msg.getIdPerfilArtista()));
 
         for (WebSocketSession s : sesiones) {
             if (s.isOpen()) {

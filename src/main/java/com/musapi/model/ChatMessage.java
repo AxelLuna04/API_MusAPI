@@ -14,6 +14,17 @@ public class ChatMessage {
     private Integer idPerfilArtista;
 
     // Getters y setters
+    
+    public ChatMessage() {
+    }
+
+    public ChatMessage(String nombreUsuario, String mensaje, Integer idPerfilArtista) {
+        this.nombreUsuario = nombreUsuario;
+        this.mensaje = mensaje;
+        this.idPerfilArtista = idPerfilArtista;
+    }
+
+    
     public String getNombreUsuario() {
         return nombreUsuario;
     }
