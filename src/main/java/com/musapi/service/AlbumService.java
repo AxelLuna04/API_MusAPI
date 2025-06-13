@@ -4,6 +4,7 @@
  */
 package com.musapi.service;
 
+import ch.qos.logback.core.util.SystemInfo;
 import com.musapi.dto.InfoAlbumDTO;
 import com.musapi.dto.AlbumDTO;
 import com.musapi.dto.BusquedaAlbumDTO;
@@ -39,6 +40,9 @@ public class AlbumService {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private CancionService cancionService;
     
     public List<BusquedaAlbumDTO> buscarAlbumesPorNombre(String texto){
         List<Album> albumesEncontrados = albumRepository.findByNombreContainingIgnoreCaseAndEstado(texto, "publico");
@@ -138,6 +142,21 @@ public class AlbumService {
             dto.setNombre(album.getNombre());
             dto.setUrlFoto(album.getUrlFoto());
             //dto.setFechaPublicacion(album.getFechaPublicacion().toString());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+    
+    public List<BusquedaAlbumDTO> obtenerAlbumesPorArtista(int idPerfilArtista) {
+        List<Album> albumesPublicos = albumRepository.findByEstadoAndPerfilArtista_IdPerfilArtista("publico", idPerfilArtista);
+        
+        return albumesPublicos.stream().map(album -> {
+            BusquedaAlbumDTO dto = new BusquedaAlbumDTO();
+            dto.setIdAlbum(album.getIdAlbum());
+            dto.setNombreAlbum(album.getNombre());
+            dto.setNombreArtista(album.getPerfilArtista().getUsuario().getNombre());
+            dto.setFechaPublicacion(album.getFechaPublicacion().toString());
+            dto.setUrlFoto(album.getUrlFoto());
+            dto.setCanciones(cancionService.obtenerCancionesPorIdAlbum(album.getIdAlbum()));
             return dto;
         }).collect(Collectors.toList());
     }
