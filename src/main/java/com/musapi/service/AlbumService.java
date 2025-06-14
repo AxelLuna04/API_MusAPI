@@ -65,7 +65,7 @@ public class AlbumService {
                                         cancion.getNombre(),
                                         cancion.getDuracion().toString(),
                                         cancion.getUrlArchivo(),
-                                        cancion.getUrlFoto(),
+                                        album.getUrlFoto(),
                                         nombreArtistas,
                                         cancion.getFechaPublicacion().toString(),
                                         cancion.getAlbum().getNombre(),
