@@ -8,6 +8,8 @@ import com.musapi.model.Album;
 import com.musapi.model.Cancion;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -17,4 +19,13 @@ public interface CancionRepository extends JpaRepository<Cancion, Integer>{
     List<Cancion> findByNombreContainingIgnoreCase(String nombreCancion);
     Cancion findByIdCancion(Integer idCancion);
     List<Cancion> findByAlbum(Album album);
+    
+    @Query("SELECT c FROM Cancion c " +
+           "JOIN c.perfilArtista_CancionList pac " +
+           "JOIN pac.perfilArtista pa " +
+           "WHERE c.estado = :estado AND pa.idPerfilArtista = :idPerfilArtista")
+    List<Cancion> findByEstadoAndArtistaId(
+        @Param("estado") String estado, 
+        @Param("idPerfilArtista") int idPerfilArtista
+    ); 
 }

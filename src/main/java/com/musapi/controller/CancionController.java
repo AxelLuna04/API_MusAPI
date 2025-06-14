@@ -108,5 +108,21 @@ public class CancionController {
                     .body(new RespuestaDTO<>("Error al obtener las canciones del álbum", null));
         }
     }
+    
+    @GetMapping("/artista")
+    public ResponseEntity<RespuestaDTO<List<BusquedaCancionDTO>>> obtenerSencillos(@RequestParam("idPerfilArtista") int idPerfilArtista) {
+        try {
+            List<BusquedaCancionDTO> sencillos = cancionService.obtenerSencillosPorIdArtista(idPerfilArtista);
+            if (sencillos.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new RespuestaDTO<>("No existen sencillos", sencillos));
+            }
+            return ResponseEntity.ok(new RespuestaDTO<>("Sencillos recuperados exitosamente", sencillos));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RespuestaDTO<>("Ocurrió un error al recuperar los sencillos: "+e.getMessage(), null));
+        }
+    }
 
 }

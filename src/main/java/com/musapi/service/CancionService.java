@@ -194,7 +194,6 @@ public class CancionService {
         return "Cancion registrada exitosamente.";
 }
 
-
     public boolean editarCancion(Integer idCancion, CancionDTO cancionDTO){
         Cancion cancion = cancionRepository.findById(idCancion)
             .orElseThrow(() -> new IllegalArgumentException("Cancion no encontrada."));
@@ -295,6 +294,34 @@ public class CancionService {
                     nombreArtistas,
                     cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null,
                     cancion.getAlbum().getNombre(),
+                    cancion.getCategoriaMusical().getNombre()
+            );
+        }).collect(Collectors.toList());
+    }
+    
+    public List<BusquedaCancionDTO> obtenerSencillosPorIdArtista(Integer idArtista) {
+        PerfilArtista artista = perfilArtistaRepository.findByIdPerfilArtista(idArtista);
+        if (artista == null){
+            throw new IllegalArgumentException("Artista no encontrado.");
+        }
+        List<Cancion> canciones = cancionRepository.findByEstadoAndArtistaId("publica", idArtista);
+
+        return canciones.stream().map(cancion -> {
+            String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
+                    ? null
+                    : cancion.getPerfilArtista_CancionList().stream()
+                        .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                        .collect(Collectors.joining(", "));
+
+            return new BusquedaCancionDTO(
+                    cancion.getIdCancion(),
+                    cancion.getNombre(),
+                    cancion.getDuracion().toString(),
+                    cancion.getUrlArchivo(),
+                    cancion.getUrlFoto(),
+                    nombreArtistas,
+                    cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null,
+                    cancion.getAlbum() == null ? null : cancion.getAlbum().getNombre(),
                     cancion.getCategoriaMusical().getNombre()
             );
         }).collect(Collectors.toList());

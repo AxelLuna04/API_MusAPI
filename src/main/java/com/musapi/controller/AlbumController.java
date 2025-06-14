@@ -95,18 +95,18 @@ public class AlbumController {
     }
     
     @GetMapping("/artista")
-    public ResponseEntity<RespuestaDTO<List<BusquedaAlbumDTO>>> obtenerAlbumes(@RequestParam("idPerfilArtista") int idPerfilArtista) {
+    public ResponseEntity<RespuestaDTO<List<BusquedaAlbumDTO>>> obtenerAlbumesPublicos(@RequestParam("idPerfilArtista") int idPerfilArtista) {
         try {
             List<BusquedaAlbumDTO> albumes = albumService.obtenerAlbumesPorArtista(idPerfilArtista);
             if (albumes.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new RespuestaDTO<>("No existen álbumes pendientes", albumes));
+                        .body(new RespuestaDTO<>("No existen álbumes públicos", albumes));
             }
-            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes pendientes recuperados exitosamente", albumes));
+            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes públicos recuperados exitosamente", albumes));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes pendientes: "+e.getMessage(), null));
+                    .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes públicos: "+e.getMessage(), null));
         }
     }
 
