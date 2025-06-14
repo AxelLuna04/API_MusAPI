@@ -10,11 +10,13 @@ import com.musapi.dto.AlbumDTO;
 import com.musapi.dto.BusquedaAlbumDTO;
 import com.musapi.dto.BusquedaCancionDTO;
 import com.musapi.model.Album;
+import com.musapi.model.Cancion;
 import com.musapi.model.PerfilArtista;
 import com.musapi.model.Usuario;
 import com.musapi.repository.AlbumRepository;
 import com.musapi.repository.PerfilArtistaRepository;
 import com.musapi.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -161,4 +163,19 @@ public class AlbumService {
         }).collect(Collectors.toList());
     }
     
+    public void publicarAlbum(int idAlbum) {
+        Album album = albumRepository.findById(idAlbum)
+            .orElseThrow(() -> new EntityNotFoundException("Álbum no encontrado"));
+        
+        album.setEstado("publico"); 
+        album.setFechaPublicacion(LocalDate.now());
+
+        
+        for (Cancion cancion : album.getCanciones()) {
+            cancion.setEstado("publica");
+            cancion.setFechaPublicacion(LocalDate.now());
+        }
+
+        albumRepository.save(album);
+    }
 }

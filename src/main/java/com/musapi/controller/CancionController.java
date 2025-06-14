@@ -48,7 +48,7 @@ public class CancionController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RespuestaDTO<>("Ocurrió un error al buscar las canciones", null));
+                .body(new RespuestaDTO<>("Ocurrió un error al buscar las canciones: "+e.getMessage(), null));
         }
     }
 

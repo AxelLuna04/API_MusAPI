@@ -16,16 +16,24 @@ import org.springframework.data.repository.query.Param;
  * @author axell
  */
 public interface CancionRepository extends JpaRepository<Cancion, Integer>{
-    List<Cancion> findByNombreContainingIgnoreCase(String nombreCancion);
     Cancion findByIdCancion(Integer idCancion);
     List<Cancion> findByAlbum(Album album);
     
     @Query("SELECT c FROM Cancion c " +
-           "JOIN c.perfilArtista_CancionList pac " +
-           "JOIN pac.perfilArtista pa " +
-           "WHERE c.estado = :estado AND pa.idPerfilArtista = :idPerfilArtista")
-    List<Cancion> findByEstadoAndArtistaId(
-        @Param("estado") String estado, 
-        @Param("idPerfilArtista") int idPerfilArtista
-    ); 
+            "JOIN c.perfilArtista_CancionList pac " +
+            "JOIN pac.perfilArtista pa " +
+            "WHERE c.estado = :estado AND pa.idPerfilArtista = :idPerfilArtista " +
+            "AND c.urlFoto IS NOT NULL")
+     List<Cancion> findByEstadoAndArtistaId(
+         @Param("estado") String estado, 
+         @Param("idPerfilArtista") int idPerfilArtista
+     );
+    
+    @Query("SELECT c FROM Cancion c " +
+            "WHERE c.estado = :estado AND LOWER(c.nombre) " +
+            "LIKE LOWER(CONCAT('%', :nombreCancion, '%'))")
+    List<Cancion> findByEstadoAndNombreContainingIgnoreCase(
+        @Param("estado") String estado,
+        @Param("nombreCancion") String nombreCancion
+    );
 }

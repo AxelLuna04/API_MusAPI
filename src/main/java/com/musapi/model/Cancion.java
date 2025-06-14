@@ -38,7 +38,7 @@ public class Cancion {
     @Column(name = "estado", length = 15, nullable = false)
     private String estado;
     
-    @Column(name = "urlFoto", length = 300) 
+    @Column(name = "urlFoto", length = 300, nullable = true) 
     private String urlFoto;
 
     @ManyToOne

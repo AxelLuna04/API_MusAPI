@@ -60,7 +60,7 @@ public class CancionService {
     private AlbumRepository albumRepository;
     
     public List<BusquedaCancionDTO> buscarCancionesPorNombre(String texto){
-        List<Cancion> cancionesEncontradas = cancionRepository.findByNombreContainingIgnoreCase(texto);
+        List<Cancion> cancionesEncontradas = cancionRepository.findByEstadoAndNombreContainingIgnoreCase("publica", texto);
         
         return cancionesEncontradas.stream()
                 .map(cancion -> {
@@ -75,10 +75,10 @@ public class CancionService {
                             cancion.getNombre(),
                             cancion.getDuracion().toString(),
                             cancion.getUrlArchivo(),
-                            cancion.getUrlArchivo(),
+                            cancion.getUrlFoto() == null ? cancion.getAlbum().getUrlFoto() : cancion.getUrlFoto(),
                             nombreArtistas,
                             cancion.getFechaPublicacion().toString(),
-                            cancion.getAlbum().getNombre(),
+                            cancion.getAlbum() == null ? null : cancion.getAlbum().getNombre(),
                             cancion.getCategoriaMusical().getNombre()
                     );
                 })
@@ -290,7 +290,7 @@ public class CancionService {
                     cancion.getNombre(),
                     cancion.getDuracion().toString(),
                     cancion.getUrlArchivo(),
-                    cancion.getUrlFoto(),
+                    album.getUrlFoto(),
                     nombreArtistas,
                     cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null,
                     cancion.getAlbum().getNombre(),

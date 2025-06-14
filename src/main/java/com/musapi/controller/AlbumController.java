@@ -9,13 +9,16 @@ import com.musapi.dto.BusquedaAlbumDTO;
 import com.musapi.dto.InfoAlbumDTO;
 import com.musapi.dto.RespuestaDTO;
 import com.musapi.service.AlbumService;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -110,4 +113,19 @@ public class AlbumController {
         }
     }
 
+    @PutMapping("/publicar/{idAlbum}")
+    public ResponseEntity<RespuestaDTO<Void>> publicarAlbum(@PathVariable int idAlbum) {
+        try {
+            albumService.publicarAlbum(idAlbum);
+            return ResponseEntity.ok(new RespuestaDTO<>("Álbum y sus canciones publicados exitosamente", null));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>(ex.getMessage(), null));
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>("Álbum no encontrado", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RespuestaDTO<>("Error al publicar el álbum: " + e.getMessage(), null));
+        }
+    }
 }

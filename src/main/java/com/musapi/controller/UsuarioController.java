@@ -119,13 +119,13 @@ public class UsuarioController {
     }
 
     @GetMapping("/artistas/buscar")
-    public ResponseEntity<RespuestaDTO<List<BusquedaArtistaDTO>>> buscarArtistasPorNombreUsuario(@RequestParam String nombreUsuario) {
+    public ResponseEntity<RespuestaDTO<List<BusquedaArtistaDTO>>> buscarArtistasPorNombreUsuario(@RequestParam("texto") String texto) {
         try {
-            List<BusquedaArtistaDTO> artistas = usuarioService.buscarArtistasPorNombreUsuario(nombreUsuario);
+            List<BusquedaArtistaDTO> artistas = usuarioService.buscarArtistasPorNombreUsuario(texto);
             return ResponseEntity.ok(new RespuestaDTO<>("Artistas encontrados.", artistas));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Error al buscar artistas.", null));
+                    .body(new RespuestaDTO<>("Error al buscar artistas: "+e.getMessage(), null));
         }
     }
 

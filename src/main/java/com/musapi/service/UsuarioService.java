@@ -36,6 +36,9 @@ public class UsuarioService {
     @Autowired
     private CorreoService correoService;
     
+    @Autowired
+    private CancionService cancionService;
+    
     @Transactional
     public boolean editarPerfil(Integer idUsuario, EdicionPerfilDTO edicionPerfil) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
@@ -88,32 +91,16 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
         return true;
     }
-
-
     
     public List<BusquedaArtistaDTO> buscarArtistasPorNombreUsuario(String nombreUsuario) {
-        List<Usuario> artistas = usuarioRepository.findByEsArtistaTrueAndNombreUsuarioContainingIgnoreCase(nombreUsuario);
+        List<Usuario> artistas = usuarioRepository.buscarArtistasPorNombreOUsuario(nombreUsuario);
 
         return artistas.stream().map(usuario -> {
             PerfilArtista perfil = usuario.getPerfilArtista();
 
-            List<BusquedaCancionDTO> canciones = perfil.getPerfilArtista_CancionList().stream()
-                    .map(PerfilArtista_Cancion::getCancion)
-                    .filter(c -> c.getAlbum() == null)
-                    .limit(10)
-                    .map(c -> new BusquedaCancionDTO(
-                            c.getIdCancion(),
-                            c.getNombre(),
-                            c.getDuracion().toString(),
-                            c.getUrlArchivo(),
-                            c.getUrlFoto(),
-                            usuario.getNombre(),
-                            c.getFechaPublicacion().toString(),
-                            c.getAlbum().getNombre(),
-                            c.getCategoriaMusical().getNombre()
-                    ))
-                    .collect(Collectors.toList());
-
+            List<BusquedaCancionDTO> canciones = cancionService.obtenerSencillosPorIdArtista(perfil.getIdPerfilArtista());
+            
+            
             return new BusquedaArtistaDTO(
                     perfil.getIdPerfilArtista(),
                     usuario.getNombre(),
