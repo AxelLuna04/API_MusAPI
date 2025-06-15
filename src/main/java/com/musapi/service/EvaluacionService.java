@@ -42,7 +42,7 @@ public class EvaluacionService {
             return "Artista no encontrado.";
         
         boolean yaEvaluo = false;
-        if(evaluacionRepository.findByUsuario_IdUsuarioAndPerfilArtista_IdPerfilArtista(evaluacionDTO.getIdUsuario(), evaluacionDTO.getIdArtista()) == null)
+        if(evaluacionRepository.findByUsuario_IdUsuarioAndPerfilArtista_IdPerfilArtista(evaluacionDTO.getIdUsuario(), evaluacionDTO.getIdArtista()) != null)
             yaEvaluo = true;
         
         if(yaEvaluo)
