@@ -15,8 +15,8 @@ import jakarta.persistence.*;
 public class ContenidoGuardado {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column (name = "idContenidoGuardado")
-    private Integer idContenidoGuardado;
+    @Column (name = "idRelacion")
+    private Integer idRelacion;
 
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
@@ -40,12 +40,12 @@ public class ContenidoGuardado {
 
     //Gettes y setters
 
-    public Integer getIdContenidoGuardado() {
-        return idContenidoGuardado;
+    public Integer getIdRelacion() {
+        return idRelacion;
     }
 
-    public void setIdContenidoGuardado(Integer idContenidoGuardado) {
-        this.idContenidoGuardado = idContenidoGuardado;
+    public void setIdRelacion(Integer idRelacion) {
+        this.idRelacion = idRelacion;
     }
 
     public Usuario getUsuario() {

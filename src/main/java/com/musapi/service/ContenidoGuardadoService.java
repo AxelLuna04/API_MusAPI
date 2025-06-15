@@ -102,6 +102,7 @@ public class ContenidoGuardadoService {
                 return "Tipo de contenido no disponible";
             }
         }
+        System.out.println("Guardando contenido: tipo=" + dto.getTipoDeContenido() + ", id=" + dto.getIdContenidoGuardado());
         contenidoGuardadoRepository.save(contenido);
         return "Contenido guardado exitosamente";
     }
