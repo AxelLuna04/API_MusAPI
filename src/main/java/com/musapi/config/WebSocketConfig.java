@@ -4,9 +4,12 @@
  */
 package com.musapi.config;
 
+import com.musapi.ws.ChatWebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 @Configuration
 @EnableWebSocket
@@ -17,9 +20,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(myWebSocketHandler, "/ws")
-                .setAllowedOriginPatterns("*");
+        registry
+          .addHandler(new ChatWebSocketHandler(), "/ws")
+          .setAllowedOriginPatterns("*");
     }
+    
+    
+    
 }
 
 
