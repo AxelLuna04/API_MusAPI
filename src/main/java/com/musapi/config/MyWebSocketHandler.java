@@ -21,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Component
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
-    private final Map<String, List<WebSocketSession>> artistasConectados = new ConcurrentHashMap<>();
+    /*private final Map<String, List<WebSocketSession>> artistasConectados = new ConcurrentHashMap<>();
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -47,7 +47,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 s.sendMessage(new TextMessage(jsonRespuesta));
             }
         }
-    }
+    }*/
 
 }
 
