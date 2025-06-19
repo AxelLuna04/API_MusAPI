@@ -70,20 +70,8 @@ public class ListaDeReproduccionController {
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<RespuestaDTO<List<ListaDeReproduccionDTO>>> obtenerListasPorUsuario(@PathVariable Integer idUsuario) {
         try {
-            List<ListaDeReproduccionDTO> listas = listaDeReproduccionService.obtenerListaDeReproduccionPorIdUsuario(idUsuario);
+            List<ListaDeReproduccionDTO> listas = listaDeReproduccionService.obtenerListasDeReproduccionPorIdUsuario(idUsuario);
             return ResponseEntity.ok(new RespuestaDTO<>("Listas obtenidas correctamente", listas));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
-        }
-    }
-    
-    @GetMapping("/lista/{idListaDeReproduccion}")
-    public ResponseEntity<RespuestaDTO<List<BusquedaCancionDTO>>> obtenerCancionesPorIdListaDeReproduccion(@PathVariable Integer idListaDeReproduccion) {
-        try {
-            List<BusquedaCancionDTO> canciones = listaDeReproduccionService.obtenerCancionesPorIdListaDeReproduccion(idListaDeReproduccion);
-            return ResponseEntity.ok(new RespuestaDTO<>("Canciones obtenidas correctamente", canciones));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
         } catch (Exception e) {

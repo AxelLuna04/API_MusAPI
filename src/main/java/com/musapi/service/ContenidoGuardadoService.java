@@ -13,6 +13,7 @@ import com.musapi.model.Album;
 import com.musapi.model.Cancion;
 import com.musapi.model.ContenidoGuardado;
 import com.musapi.model.ListaDeReproduccion;
+import com.musapi.model.ListaDeReproduccion_Cancion;
 import com.musapi.model.PerfilArtista;
 import com.musapi.model.Usuario;
 import com.musapi.repository.AlbumRepository;
@@ -23,6 +24,7 @@ import com.musapi.repository.PerfilArtistaRepository;
 import com.musapi.repository.UsuarioRepository;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,22 +145,55 @@ public class ContenidoGuardadoService {
 
     public List<ListaDeReproduccionDTO> obtenerListasGuardadasPorUsuario(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findByIdUsuario(idUsuario);
-        if (usuario == null) return Collections.emptyList();
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
 
         List<ContenidoGuardado> guardados = contenidoGuardadoRepository.findByUsuarioAndListaDeReproduccionIsNotNull(usuario);
-        List<ListaDeReproduccionDTO> listasDTO = new ArrayList<>();
 
-        for (ContenidoGuardado contenido : guardados) {
+        return guardados.stream().map(contenido -> {
             ListaDeReproduccion lista = contenido.getListaDeReproduccion();
+
             ListaDeReproduccionDTO dto = new ListaDeReproduccionDTO();
             dto.setIdListaDeReproduccion(lista.getIdListaDeReproduccion());
             dto.setNombre(lista.getNombre());
             dto.setUrlFoto(lista.getUrlFoto());
-            listasDTO.add(dto);
-        }
+            dto.setDescripcion(lista.getDescripcion());
 
-        return listasDTO;
+            List<BusquedaCancionDTO> canciones = lista.getListaDeReproduccion_CancionList().stream()
+                .sorted(Comparator.comparingInt(ListaDeReproduccion_Cancion::getPosicionCancion))
+                .map(relacion -> {
+                    Cancion cancion = relacion.getCancion();
+
+                    String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
+                        ? null
+                        : cancion.getPerfilArtista_CancionList().stream()
+                            .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                            .collect(Collectors.joining(", "));
+
+                    BusquedaCancionDTO cancionDTO = new BusquedaCancionDTO();
+                    cancionDTO.setIdCancion(cancion.getIdCancion());
+                    cancionDTO.setNombre(cancion.getNombre());
+                    cancionDTO.setDuracion(cancion.getDuracion().toString());
+                    cancionDTO.setUrlArchivo(cancion.getUrlArchivo());
+                    cancionDTO.setUrlFoto(cancion.getUrlFoto());
+                    cancionDTO.setNombreArtista(nombreArtistas);
+                    cancionDTO.setFechaPublicacion(
+                        cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null
+                    );
+                    cancionDTO.setNombreAlbum(cancion.getAlbum().getNombre());
+                    cancionDTO.setCategoriaMusical(cancion.getCategoriaMusical().getNombre());
+
+                    return cancionDTO;
+                })
+                .collect(Collectors.toList());
+
+            dto.setCanciones(canciones);
+
+            return dto;
+        }).collect(Collectors.toList());
     }
+
 
     public List<BusquedaAlbumDTO> obtenerAlbumesGuardadosPorUsuario(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findByIdUsuario(idUsuario);
