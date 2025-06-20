@@ -144,7 +144,7 @@ public class ListaDeReproduccionService {
                     cancionDTO.setFechaPublicacion(
                         cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null
                     );
-                    cancionDTO.setNombreAlbum(cancion.getAlbum().getNombre());
+                    cancionDTO.setNombreAlbum(cancion.getAlbum() != null ? cancion.getAlbum().getNombre() : null);
                     cancionDTO.setCategoriaMusical(cancion.getCategoriaMusical().getNombre());
 
                     return cancionDTO;

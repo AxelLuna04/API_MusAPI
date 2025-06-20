@@ -12,6 +12,7 @@ public class ListaDeReproduccion_CancionDTO {
     private Integer idCancion;
     private Integer idListaDeReproduccion;
     private Integer idUsuario;
+    
 
     public Integer getIdCancion() {
         return idCancion;
