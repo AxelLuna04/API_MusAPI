@@ -6,6 +6,7 @@ target/
 
 ### Rutas de las imagenes guardadas ###
 /uploads
+/uploadsDocker
 
 ### STS ###
 .apt_generated

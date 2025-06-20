@@ -11,6 +11,9 @@ services:
       - db
     networks:
       - backend
+    volumes:
+      - ./uploadsDocker:/app/uploads
+
 
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
