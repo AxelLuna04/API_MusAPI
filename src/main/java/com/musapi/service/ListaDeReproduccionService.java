@@ -8,6 +8,7 @@ import com.musapi.dto.BusquedaCancionDTO;
 import com.musapi.dto.CreacionListaDeReproduccionDTO;
 import com.musapi.dto.ListaDeReproduccionDTO;
 import com.musapi.dto.ListaDeReproduccion_CancionDTO;
+import com.musapi.model.Album;
 import com.musapi.model.Cancion;
 import com.musapi.model.ListaDeReproduccion;
 import com.musapi.model.ListaDeReproduccion_Cancion;
@@ -139,7 +140,14 @@ public class ListaDeReproduccionService {
                     cancionDTO.setNombre(cancion.getNombre());
                     cancionDTO.setDuracion(cancion.getDuracion().toString());
                     cancionDTO.setUrlArchivo(cancion.getUrlArchivo());
-                    cancionDTO.setUrlFoto(cancion.getUrlFoto());
+                    Album album = cancion.getAlbum();
+                    if (album == null) {
+                        cancionDTO.setUrlFoto(cancion.getUrlFoto());
+                        System.out.println("\t- cancion es sencillo");
+                    } else {
+                        cancionDTO.setUrlFoto(album.getUrlFoto());
+                        System.out.println("\t- cancion es parte de album");
+                    }
                     cancionDTO.setNombreArtista(nombreArtistas);
                     cancionDTO.setFechaPublicacion(
                         cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null

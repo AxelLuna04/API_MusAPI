@@ -152,6 +152,7 @@ public class ContenidoGuardadoService {
         List<ContenidoGuardado> guardados = contenidoGuardadoRepository.findByUsuarioAndListaDeReproduccionIsNotNull(usuario);
 
         return guardados.stream().map(contenido -> {
+            System.out.println("\t- Se comienzan a jalar canciones de la lista...");
             ListaDeReproduccion lista = contenido.getListaDeReproduccion();
 
             ListaDeReproduccionDTO dto = new ListaDeReproduccionDTO();
@@ -176,7 +177,14 @@ public class ContenidoGuardadoService {
                     cancionDTO.setNombre(cancion.getNombre());
                     cancionDTO.setDuracion(cancion.getDuracion().toString());
                     cancionDTO.setUrlArchivo(cancion.getUrlArchivo());
-                    cancionDTO.setUrlFoto(cancion.getUrlFoto());
+                    Album album = cancion.getAlbum();
+                    if (album == null) {
+                        cancionDTO.setUrlFoto(cancion.getUrlFoto());
+                        System.out.println("\t- cancion es sencillo");
+                    } else {
+                        cancionDTO.setUrlFoto(album.getUrlFoto());
+                        System.out.println("\t- cancion es parte de album");
+                    }
                     cancionDTO.setNombreArtista(nombreArtistas);
                     cancionDTO.setFechaPublicacion(
                         cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null
@@ -222,7 +230,7 @@ public class ContenidoGuardadoService {
                 cancionDTO.setCategoriaMusical(cancion.getCategoriaMusical().getNombre());
                 cancionDTO.setFechaPublicacion(cancion.getFechaPublicacion().toString());
                 cancionDTO.setUrlArchivo(cancion.getUrlArchivo());
-                cancionDTO.setUrlFoto(cancion.getUrlFoto());
+                cancionDTO.setUrlFoto(album.getUrlFoto());
 
                 String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
                     ? "Desconocido"
