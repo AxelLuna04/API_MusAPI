@@ -11,12 +11,12 @@ package com.musapi.dto;
 public class CancionMasEscuchadaDTO {
     private String nombreCancion;
     private String nombreUsuarioArtista;
-    private long minutosEscuchados;
+    private long segundosEscuchados;
 
-    public CancionMasEscuchadaDTO(String nombreCancion, String nombreUsuarioArtista, long minutosEscuchados) {
+    public CancionMasEscuchadaDTO(String nombreCancion, String nombreUsuarioArtista, long segundosEscuchados) {
         this.nombreCancion = nombreCancion;
         this.nombreUsuarioArtista = nombreUsuarioArtista;
-        this.minutosEscuchados = minutosEscuchados;
+        this.segundosEscuchados = segundosEscuchados;
     }
 
     public String getNombreCancion() {
@@ -35,12 +35,12 @@ public class CancionMasEscuchadaDTO {
         this.nombreUsuarioArtista = nombreUsuarioArtista;
     }
 
-    public long getMinutosEscuchados() {
-        return minutosEscuchados;
+    public long getSegundosEscuchados() {
+        return segundosEscuchados;
     }
 
-    public void setMinutosEscuchados(long minutosEscuchados) {
-        this.minutosEscuchados = minutosEscuchados;
+    public void setSegundosEscuchados(long segundosEscuchados) {
+        this.segundosEscuchados = segundosEscuchados;
     }
     
     

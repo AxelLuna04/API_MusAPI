@@ -13,12 +13,12 @@ import java.util.List;
 public class EstadisticasPersonalesDTO {
     private List<String> topCanciones;
     private List<String> topArtistas;
-    private long minutosEscuchados;
+    private long segundosEscuchados;
 
-    public EstadisticasPersonalesDTO(List<String> topCanciones, List<String> topArtistas, long minutosEscuchados) {
+    public EstadisticasPersonalesDTO(List<String> topCanciones, List<String> topArtistas, long segundosEscuchados) {
         this.topCanciones = topCanciones;
         this.topArtistas = topArtistas;
-        this.minutosEscuchados = minutosEscuchados;
+        this.segundosEscuchados = segundosEscuchados;
     }
 
     public List<String> getTopCanciones() {
@@ -29,10 +29,6 @@ public class EstadisticasPersonalesDTO {
         return topArtistas;
     }
 
-    public long getMinutosEscuchados() {
-        return minutosEscuchados;
-    }
-
     public void setTopCanciones(List<String> topCanciones) {
         this.topCanciones = topCanciones;
     }
@@ -41,10 +37,14 @@ public class EstadisticasPersonalesDTO {
         this.topArtistas = topArtistas;
     }
 
-    public void setMinutosEscuchados(long minutosEscuchados) {
-        this.minutosEscuchados = minutosEscuchados;
+    public long getSegundosEscuchados() {
+        return segundosEscuchados;
     }
-    
+
+    public void setSegundosEscuchados(long segundosEscuchados) {
+        this.segundosEscuchados = segundosEscuchados;
+    }
+ 
     
 }
 

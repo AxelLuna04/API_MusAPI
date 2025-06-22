@@ -10,11 +10,11 @@ package com.musapi.controller;
  */
 public class ArtistaMasEscuchadoDTO {
     private String nombreArtista;
-    private long minutosEscuchados;
+    private long segundosEscuchados;
 
-    public ArtistaMasEscuchadoDTO(String nombreArtista, long minutosEscuchados) {
+    public ArtistaMasEscuchadoDTO(String nombreArtista, long segundosEscuchados) {
         this.nombreArtista = nombreArtista;
-        this.minutosEscuchados = minutosEscuchados;
+        this.segundosEscuchados = segundosEscuchados;
     }
     
     public String getNombreArtista() {
@@ -25,13 +25,14 @@ public class ArtistaMasEscuchadoDTO {
         this.nombreArtista = nombreArtista;
     }
 
-    public long getMinutosEscuchados() {
-        return minutosEscuchados;
+    public long getSegundosEscuchados() {
+        return segundosEscuchados;
     }
 
-    public void setMinutosEscuchados(long minutosEscuchados) {
-        this.minutosEscuchados = minutosEscuchados;
+    public void setSegundosEscuchados(long segundosEscuchados) {
+        this.segundosEscuchados = segundosEscuchados;
     }
+
     
     
 }
