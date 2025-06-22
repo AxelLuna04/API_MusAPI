@@ -13,7 +13,7 @@ import java.time.LocalTime;
 public class EscuchaDTO {
     private Integer idUsuario;
     private Integer idCancion;
-    private LocalTime tiempoEscucha;
+    private Integer segundosEscucha;
 
     public Integer getIdUsuario() {
         return idUsuario;
@@ -31,13 +31,13 @@ public class EscuchaDTO {
         this.idCancion = idCancion;
     }
 
-    public LocalTime getTiempoEscucha() {
-        return tiempoEscucha;
+    public Integer getSegundosEscucha() {
+        return segundosEscucha;
     }
 
-    public void setTiempoEscucha(LocalTime tiempoEscucha) {
-        this.tiempoEscucha = tiempoEscucha;
+    public void setSegundosEscucha(Integer segundosEscucha) {
+        this.segundosEscucha = segundosEscucha;
     }
-    
+
     
 }

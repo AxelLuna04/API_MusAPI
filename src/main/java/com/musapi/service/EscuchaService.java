@@ -12,6 +12,7 @@ import com.musapi.repository.CancionRepository;
 import com.musapi.repository.EscuchaRepository;
 import com.musapi.repository.UsuarioRepository;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,13 @@ public class EscuchaService {
         escucha.setUsuario(usuario);
         escucha.setCancion(cancion);
         escucha.setFechaEscucha(LocalDate.now());
-        escucha.setTiempoEscucha(escuchaDTO.getTiempoEscucha());
+        
+        int horas = escuchaDTO.getSegundosEscucha() / 3600;
+        int minutos = (escuchaDTO.getSegundosEscucha() % 3600) / 60;
+        int segundos = escuchaDTO.getSegundosEscucha() % 60;
+        LocalTime tiempoEscucha = LocalTime.of(horas, minutos, segundos);
+        
+        escucha.setTiempoEscucha(tiempoEscucha);
 
         escuchaRepository.save(escucha);
     }
