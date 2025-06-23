@@ -61,28 +61,36 @@ public class CategoriaMusicalController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaMusical> obtenerCategoriaMusicalPorId(@PathVariable Integer id) {
-        Optional<CategoriaMusical> categoriaMusical = categoriaMusicalRepository.findById(id);
+    public ResponseEntity<CategoriaMusicalDTO> obtenerCategoriaMusicalPorId(@PathVariable Integer id) {
+        CategoriaMusical categoriaMusical = categoriaMusicalRepository.findByIdCategoriaMusical(id);
         
-        if(categoriaMusical.isPresent()) {
-            return ResponseEntity.ok(categoriaMusical.get());
+        if(categoriaMusical != null) {
+            CategoriaMusicalDTO categoriaMusicalDTO = new CategoriaMusicalDTO(categoriaMusical.getIdCategoriaMusical(), categoriaMusical.getNombre(), categoriaMusical.getDescripcion());
+            return ResponseEntity.ok(categoriaMusicalDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaMusical> actualizarCategoriaMusical(@PathVariable Integer id, @RequestBody CategoriaMusical categoriaMusicalActualizada) {
+    public ResponseEntity<CategoriaMusicalDTO> actualizarCategoriaMusical(@PathVariable Integer id, @RequestBody CategoriaMusical categoriaMusicalActualizada) {
         return categoriaMusicalRepository.findById(id)
                 .map(categoriaMusicalExistente -> {
                     if(categoriaMusicalActualizada.getNombre() != null) {
                         categoriaMusicalExistente.setNombre(categoriaMusicalActualizada.getNombre());
                     }
-                    if(categoriaMusicalActualizada.getDescripcion()!= null) {
+                    if(categoriaMusicalActualizada.getDescripcion() != null) {
                         categoriaMusicalExistente.setDescripcion(categoriaMusicalActualizada.getDescripcion());
                     }
-                    
-                    return ResponseEntity.ok(categoriaMusicalRepository.save(categoriaMusicalExistente));
+
+                    CategoriaMusical categoriaActualizada = categoriaMusicalRepository.save(categoriaMusicalExistente);
+                    CategoriaMusicalDTO categoriaMusicalDTO = new CategoriaMusicalDTO(
+                        categoriaActualizada.getIdCategoriaMusical(),
+                        categoriaActualizada.getNombre(),
+                        categoriaActualizada.getDescripcion()
+                    );
+
+                    return ResponseEntity.ok(categoriaMusicalDTO);
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
