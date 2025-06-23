@@ -57,17 +57,19 @@ public class EstadisticasService {
         PerfilArtista artista = perfilArtistaRepository.findById(idPerfilArtista)
                 .orElseThrow(() -> new NoSuchElementException("Artista no encontrado"));
 
+        /*
         Set<Integer> cancionesIds = artista.getPerfilArtista_CancionList()
                 .stream()
                 .map(pac -> pac.getCancion().getIdCancion())
                 .collect(Collectors.toSet());
 
         Set<Integer> oyentes = escuchaRepository.findOyentesByCancionIds(cancionesIds);
-        int numeroOyentes = oyentes.size();
-
+        int numeroOyentes = oyentes.size();*/
+        int numeroOyentes = escuchaRepository.countUsuariosUnicosQueEscucharonArtista(idPerfilArtista);
+        
         int numeroGuardados = 0;
         if (tipoContenido.equalsIgnoreCase("Cancion")) {
-            Set<Integer> usuariosGuardaronContenido = contenidoGuardadoRepository
+            /*Set<Integer> usuariosGuardaronContenido = contenidoGuardadoRepository
                     .findUsuariosByCancionIds(cancionesIds);
 
             Map<Integer, Set<Integer>> usuarioCancionesMap = new HashMap<>();
@@ -79,7 +81,8 @@ public class EstadisticasService {
 
             Set<Integer> usuariosFinales = new HashSet<>(usuariosGuardaronContenido);
             usuariosFinales.addAll(usuarioCancionesMap.keySet());
-            numeroGuardados = usuariosFinales.size();
+            numeroGuardados = usuariosFinales.size();*/
+            numeroGuardados = escuchaRepository.countAparicionesEnListasDeReproduccion(idPerfilArtista);
 
         } else if (tipoContenido.equalsIgnoreCase("Album")) {
             Set<Integer> albumIds = artista.getAlbumes()
@@ -97,17 +100,21 @@ public class EstadisticasService {
     
     public EstadisticasPersonalesDTO obtenerEstadisticasPersonales(Integer idUsuario, LocalDate fechaInicio, LocalDate fechaFin) {
         List<Escucha> escuchas = escuchaRepository.findByUsuario_IdUsuarioAndFechaEscuchaBetween(idUsuario, fechaInicio, fechaFin);
-
-        long totalMinutos = escuchas.stream()
+        for (Escucha escucha : escuchas) {
+            System.out.println("\t- Escucha encontrada con id: " + escucha.getIdEscucha()+" y valor: "+escucha.getTiempoEscucha());
+        }
+        long totalSegundos = escuchas.stream()
                 .filter(e -> e.getTiempoEscucha() != null)
-                .mapToLong(e -> e.getTiempoEscucha().toSecondOfDay() / 60)
+                .mapToLong(e -> e.getTiempoEscucha().toSecondOfDay())
                 .sum();
 
         Map<Cancion, Long> conteoCanciones = escuchas.stream()
                 .collect(Collectors.groupingBy(Escucha::getCancion, Collectors.counting()));
 
         List<String> topCanciones = conteoCanciones.entrySet().stream()
-                .sorted(Map.Entry.<Cancion, Long>comparingByValue().reversed())
+                .sorted(Map.Entry.<Cancion, Long>comparingByValue()
+                        .reversed()
+                        .thenComparing(entry -> entry.getKey().getNombre()))
                 .limit(5)
                 .map(entry -> {
                     Cancion cancion = entry.getKey();
@@ -132,7 +139,7 @@ public class EstadisticasService {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
-        return new EstadisticasPersonalesDTO(topCanciones, topArtistas, totalMinutos);
+        return new EstadisticasPersonalesDTO(topCanciones, topArtistas, totalSegundos);
     }
     
     public EstadisticasNumeroUsuariosDTO obtenerConteoUsuariosYArtistas() {
@@ -145,19 +152,19 @@ public class EstadisticasService {
     public List<ArtistaMasEscuchadoDTO> obtenerTop10ArtistasMasEscuchados(LocalDate fechaInicio, LocalDate fechaFin) {
         List<Escucha> escuchas = escuchaRepository.findByFechaEscuchaBetween(fechaInicio, fechaFin);
 
-        Map<String, Long> artistaMinutosMap = new HashMap<>();
+        Map<String, Long> artistaSegundosMap = new HashMap<>();
 
         for (Escucha escucha : escuchas) {
             if (escucha.getTiempoEscucha() == null) continue;
-            long minutos = escucha.getTiempoEscucha().toSecondOfDay() / 60;
+            long segundos = escucha.getTiempoEscucha().toSecondOfDay() ;
 
             for (PerfilArtista_Cancion pac : escucha.getCancion().getPerfilArtista_CancionList()) {
                 String artista = pac.getPerfilArtista().getUsuario().getNombreUsuario();
-                artistaMinutosMap.put(artista, artistaMinutosMap.getOrDefault(artista, 0L) + minutos);
+                artistaSegundosMap.put(artista, artistaSegundosMap.getOrDefault(artista, 0L) + segundos);
             }
         }
 
-        return artistaMinutosMap.entrySet().stream()
+        return artistaSegundosMap.entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
                 .limit(10)
                 .map(entry -> new ArtistaMasEscuchadoDTO(entry.getKey(), entry.getValue()))
@@ -167,16 +174,16 @@ public class EstadisticasService {
     public List<CancionMasEscuchadaDTO> obtenerTop10CancionesMasEscuchadas(LocalDate fechaInicio, LocalDate fechaFin) {
         List<Escucha> escuchas = escuchaRepository.findByFechaEscuchaBetween(fechaInicio, fechaFin);
 
-        Map<Cancion, Long> minutosPorCancion = new HashMap<>();
+        Map<Cancion, Long> segundosPorCancion = new HashMap<>();
 
         for (Escucha escucha : escuchas) {
             if (escucha.getTiempoEscucha() == null) continue;
-            long minutos = escucha.getTiempoEscucha().toSecondOfDay() / 60;
+            long minutos = escucha.getTiempoEscucha().toSecondOfDay();
             Cancion c = escucha.getCancion();
-            minutosPorCancion.put(c, minutosPorCancion.getOrDefault(c, 0L) + minutos);
+            segundosPorCancion.put(c, segundosPorCancion.getOrDefault(c, 0L) + minutos);
         }
 
-        return minutosPorCancion.entrySet().stream()
+        return segundosPorCancion.entrySet().stream()
                 .sorted(Map.Entry.<Cancion, Long>comparingByValue().reversed())
                 .limit(10)
                 .map(entry -> {
