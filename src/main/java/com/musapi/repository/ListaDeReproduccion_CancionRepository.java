@@ -4,7 +4,9 @@
  */
 package com.musapi.repository;
 
+import com.musapi.model.Cancion;
 import com.musapi.model.ListaDeReproduccion_Cancion;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +20,6 @@ import org.springframework.data.repository.query.Param;
 public interface ListaDeReproduccion_CancionRepository extends JpaRepository<ListaDeReproduccion_Cancion, Integer>{
     @Query("SELECT rel FROM ListaDeReproduccion_Cancion rel WHERE rel.cancion.idCancion IN :ids")
     List<ListaDeReproduccion_Cancion> findByCancionIds(@Param("ids") Set<Integer> ids); 
+    @Transactional
+    void deleteByCancion(Cancion cancion);
 }

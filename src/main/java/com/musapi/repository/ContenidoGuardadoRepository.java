@@ -35,5 +35,7 @@ public interface ContenidoGuardadoRepository extends JpaRepository<ContenidoGuar
 
     @Query("SELECT DISTINCT cg.usuario.idUsuario FROM ContenidoGuardado cg WHERE cg.album.idAlbum IN :ids")
     Set<Integer> findUsuariosByAlbumIds(@Param("ids") Set<Integer> ids);
+    
+    List<ContenidoGuardado> findByPerfilArtista(PerfilArtista perfilArtista);
 
 }

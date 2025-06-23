@@ -25,5 +25,6 @@ public class CorreoService {
         mensaje.setSubject(asunto);
         mensaje.setText(cuerpo);
         mailSender.send(mensaje);
+        System.out.println("Envia correo");
     }
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -124,5 +125,19 @@ public class CancionController {
                     .body(new RespuestaDTO<>("Ocurrió un error al recuperar los sencillos: "+e.getMessage(), null));
         }
     }
+    
+    @DeleteMapping("/{idCancion}/eliminar")
+    public ResponseEntity<RespuestaDTO<String>> eliminarCancion(@PathVariable Integer idCancion) {
+        try {
+            String resultado = cancionService.eliminarCancion(idCancion);
+            return ResponseEntity.ok(new RespuestaDTO<>(resultado, null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Error al eliminar la canción: " + e.getMessage(), null));
+        }
+    }
+
 
 }

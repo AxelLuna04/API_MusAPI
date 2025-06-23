@@ -8,6 +8,7 @@ import com.musapi.dto.BusquedaArtistaDTO;
 import com.musapi.dto.BusquedaCancionDTO;
 import com.musapi.dto.EdicionPerfilDTO;
 import com.musapi.dto.PerfilArtistaDTO;
+import com.musapi.dto.UsuarioDTO;
 import com.musapi.model.PerfilArtista;
 import com.musapi.model.PerfilArtista_Cancion;
 import com.musapi.model.Usuario;
@@ -111,6 +112,24 @@ public class UsuarioService {
             );
         }).collect(Collectors.toList());
     }
+    
+    public List<UsuarioDTO> buscarUsuarios(String nombreUsuario, Integer idUsuario) {
+    List<Usuario> usuarios = usuarioRepository.buscarUsuariosPorNombreOUsuario(nombreUsuario, idUsuario);
+
+        return usuarios.stream()
+            .map(usuario -> new UsuarioDTO(
+                usuario.getIdUsuario(),
+                usuario.getNombreUsuario(),
+                usuario.getNombre(),
+                usuario.getPais(),
+                usuario.getCorreo(),
+                usuario.getEsAdmin(),
+                usuario.getEsArtista(),
+                null
+            ))
+            .collect(Collectors.toList());
+    }
+
     
     public BusquedaArtistaDTO obtenerArtistaPorId(Integer idArtista) {
         Usuario artista = usuarioRepository.findByIdUsuarioAndEsArtistaTrue(idArtista);

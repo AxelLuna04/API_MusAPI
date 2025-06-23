@@ -21,11 +21,13 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -45,6 +47,9 @@ public class AlbumService {
     
     @Autowired
     private CancionService cancionService;
+    
+    @Autowired
+    private NotificacionService notificacionService;
     
     public List<BusquedaAlbumDTO> buscarAlbumesPorNombre(String texto){
         List<Album> albumesEncontrados = albumRepository.findByNombreContainingIgnoreCaseAndEstado(texto, "publico");
@@ -177,5 +182,79 @@ public class AlbumService {
         }
 
         albumRepository.save(album);
+        
+        PerfilArtista perfil = album.getPerfilArtista();
+        String mensaje = "El artista " + perfil.getUsuario().getNombreUsuario() + " ha publicado un nuevo álbum: " + album.getNombre();
+        notificacionService.notificarSeguidores(perfil, mensaje);
     }
+    
+    public String eliminarAlbum(Integer idAlbum) {
+        Album album = albumRepository.findById(idAlbum)
+            .orElseThrow(() -> new EntityNotFoundException("Álbum no encontrado"));
+
+        for (Cancion cancion : new ArrayList<>(album.getCanciones())) {
+            cancionService.eliminarCancion(cancion.getIdCancion());
+        }
+
+        if (album.getUrlFoto() != null) {
+            File imagen = new File(System.getProperty("user.dir") + File.separator + album.getUrlFoto().replace("/", File.separator));
+            if (imagen.exists()) imagen.delete();
+        }
+
+        albumRepository.delete(album);
+        return "Album eliminado correctamente.";
+    }
+    
+    public void editarAlbum(AlbumDTO albumDTO) {
+        Album album = albumRepository.findById(albumDTO.getIdUsuario())
+            .orElseThrow(() -> new EntityNotFoundException("Álbum no encontrado."));
+        boolean seEditoAlbum =false;
+
+        if (albumDTO.getNombre() != null && !album.getNombre().isBlank()) {
+            album.setNombre(albumDTO.getNombre());
+            seEditoAlbum =true;
+        }
+        
+        if (albumDTO.getFoto() != null && !albumDTO.getFoto().isEmpty()) {
+            eliminarImagen(album.getUrlFoto());
+            String nuevaRuta = guardarImagen(albumDTO.getFoto(), album.getPerfilArtista().getIdPerfilArtista());
+            album.setUrlFoto(nuevaRuta);
+            seEditoAlbum=true;
+        }
+
+        if (seEditoAlbum) {
+            albumRepository.save(album);
+        }
+    }
+
+    private void eliminarImagen(String urlFoto) {
+        if (urlFoto != null) {
+            File imagen = new File(System.getProperty("user.dir") + File.separator + urlFoto.replace("/", File.separator));
+            if (imagen.exists()) {
+                imagen.delete();
+            }
+        }
+    }
+
+    private String guardarImagen(MultipartFile nuevaFoto, int idPerfilArtista) {
+        String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-albumes";
+        File directorio = new File(carpeta);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+
+        String nombreArchivo = "foto_" + idPerfilArtista + "_" + System.currentTimeMillis() + ".jpg";
+        File destino = new File(directorio, nombreArchivo);
+
+        try {
+            nuevaFoto.transferTo(destino);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar la nueva imagen.");
+        }
+
+        return "/uploads/fotos-albumes/" + nombreArchivo;
+    }
+
+
+
 }

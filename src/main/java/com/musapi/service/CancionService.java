@@ -16,6 +16,7 @@ import com.musapi.model.SolicitudColaboracion;
 import com.musapi.repository.AlbumRepository;
 import com.musapi.repository.CancionRepository;
 import com.musapi.repository.CategoriaMusicalRepository;
+import com.musapi.repository.ListaDeReproduccion_CancionRepository;
 import com.musapi.repository.NotificacionRepository;
 import com.musapi.repository.PerfilArtistaRepository;
 import com.musapi.repository.PerfilArtista_CancionRepository;
@@ -58,6 +59,12 @@ public class CancionService {
     
     @Autowired
     private AlbumRepository albumRepository;
+    
+    @Autowired
+    private NotificacionService notificacionService;
+    
+    @Autowired
+    private ListaDeReproduccion_CancionRepository listaDeReproduccion_CancionRepository;
     
     public List<BusquedaCancionDTO> buscarCancionesPorNombre(String texto){
         List<Cancion> cancionesEncontradas = cancionRepository.findByEstadoAndNombreContainingIgnoreCase("publica", texto);
@@ -158,6 +165,13 @@ public class CancionService {
         } else {
             cancion.setEstado("publica");
             cancion.setFechaPublicacion(LocalDate.now());
+            
+            if (!esColaboracion && album == null) {
+                PerfilArtista perfil = perfilArtistaRepository.findByIdPerfilArtista(cancionDTO.getIdPerfilArtistas().get(0));
+                String mensaje = "El artista " + perfil.getUsuario().getNombreUsuario() + " ha publicado una nueva canción: " + cancion.getNombre();
+                notificacionService.notificarSeguidores(perfil, mensaje);
+            }
+
         }
 
         cancionRepository.save(cancion);
@@ -192,7 +206,7 @@ public class CancionService {
         }
 
         return "Cancion registrada exitosamente.";
-}
+    }
 
     public boolean editarCancion(Integer idCancion, CancionDTO cancionDTO){
         Cancion cancion = cancionRepository.findById(idCancion)
@@ -326,5 +340,30 @@ public class CancionService {
             );
         }).collect(Collectors.toList());
     }
+    
+    public String eliminarCancion(Integer idCancion) {
+        Cancion cancion = cancionRepository.findById(idCancion)
+            .orElseThrow(() -> new IllegalArgumentException("Canción no encontrada."));
+
+        if (cancion.getUrlArchivo() != null) {
+            File archivo = new File(System.getProperty("user.dir") + File.separator + cancion.getUrlArchivo().replace("/", File.separator));
+            if (archivo.exists()) archivo.delete();
+        }
+
+        if (cancion.getUrlFoto() != null) {
+            File imagen = new File(System.getProperty("user.dir") + File.separator + cancion.getUrlFoto().replace("/", File.separator));
+            if (imagen.exists()) imagen.delete();
+        }
+
+        perfilArtista_CancionRepository.deleteByCancion(cancion);
+        listaDeReproduccion_CancionRepository.deleteByCancion(cancion);
+
+        cancionRepository.delete(cancion);
+
+        return "Canción eliminada correctamente.";
+    }
+
+
+
 
 }

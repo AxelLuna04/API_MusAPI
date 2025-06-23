@@ -16,6 +16,7 @@ import com.musapi.model.Usuario;
 import com.musapi.repository.CancionRepository;
 import com.musapi.repository.ListaDeReproduccionRepository;
 import com.musapi.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -165,7 +167,60 @@ public class ListaDeReproduccionService {
         }).collect(Collectors.toList());
     }
 
+    public void editarLista(CreacionListaDeReproduccionDTO listaDTO) {
+        ListaDeReproduccion lista = listaDeReproduccionRepository.findById(listaDTO.getIdUsuario())
+            .orElseThrow(() -> new EntityNotFoundException("Lista no encontrada."));
+        boolean seEditoLista =false;
 
+        if (listaDTO.getNombre() != null && !lista.getNombre().isBlank()) {
+            lista.setNombre(listaDTO.getNombre());
+            seEditoLista =true;
+        }
+        
+        if (listaDTO.getDescripcion() != null && !lista.getDescripcion().isBlank()) {
+            lista.setDescripcion(listaDTO.getDescripcion());
+            seEditoLista =true;
+        }
+        
+        if (listaDTO.getFoto() != null && !listaDTO.getFoto().isEmpty()) {
+            eliminarImagen(lista.getUrlFoto());
+            String nuevaRuta = guardarImagen(listaDTO.getFoto(), lista.getUsuario().getIdUsuario(), listaDTO.getNombre());
+            lista.setUrlFoto(nuevaRuta);
+            seEditoLista=true;
+        }
+
+        if (seEditoLista) {
+            listaDeReproduccionRepository.save(lista);
+        }
+    }
+
+    private void eliminarImagen(String urlFoto) {
+        if (urlFoto != null) {
+            File imagen = new File(System.getProperty("user.dir") + File.separator + urlFoto.replace("/", File.separator));
+            if (imagen.exists()) {
+                imagen.delete();
+            }
+        }
+    }
+
+    private String guardarImagen(MultipartFile nuevaFoto, int idUsuario, String nombreLista) {
+        String carpeta = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "fotos-listasDeReproduccion";
+        File directorio = new File(carpeta);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+
+        String nombreArchivo = "foto_" + idUsuario + "_" + nombreLista + "_" + System.currentTimeMillis() + ".jpg";
+        File destino = new File(directorio, nombreArchivo);
+
+        try {
+            nuevaFoto.transferTo(destino);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar la nueva imagen.");
+        }
+
+        return "/uploads/fotos-listasDeReproduccion/" + nombreArchivo;
+    }
 
 
 }

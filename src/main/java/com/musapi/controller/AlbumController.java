@@ -14,6 +14,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -128,4 +129,33 @@ public class AlbumController {
                     .body(new RespuestaDTO<>("Error al publicar el álbum: " + e.getMessage(), null));
         }
     }
+    
+    @DeleteMapping("/{idAlbum}/eliminar")
+    public ResponseEntity<RespuestaDTO<String>> eliminarAlbum(@PathVariable int idAlbum) {
+        try {
+            String resultado = albumService.eliminarAlbum(idAlbum);
+            System.out.println(resultado);
+            return ResponseEntity.ok(new RespuestaDTO<>(resultado, null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Error al eliminar el album: " + e.getMessage(), null));
+        }
+    }
+    
+    @PutMapping("/editar")
+    public ResponseEntity<RespuestaDTO<Void>> editarAlbum(@ModelAttribute AlbumDTO albumDTO) {
+        try {
+            albumService.editarAlbum(albumDTO);
+            return ResponseEntity.ok(new RespuestaDTO<>("Álbum editado exitosamente.", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new RespuestaDTO<>(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Error al editar el álbum: " + e.getMessage(), null));
+        }
+    }
+
 }

@@ -10,13 +10,16 @@ import com.musapi.dto.ListaDeReproduccionDTO;
 import com.musapi.dto.ListaDeReproduccion_CancionDTO;
 import com.musapi.dto.RespuestaDTO;
 import com.musapi.service.ListaDeReproduccionService;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,6 +79,20 @@ public class ListaDeReproduccionController {
             return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
+        }
+    }
+    
+    @PutMapping("/editar")
+    public ResponseEntity<RespuestaDTO<Void>> editarLista(@ModelAttribute CreacionListaDeReproduccionDTO listaDTO) {
+        try {
+            listaDeReproduccionService.editarLista(listaDTO);
+            return ResponseEntity.ok(new RespuestaDTO<>("Lista editada exitosamente.", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new RespuestaDTO<>(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Error al editar la lista: " + e.getMessage(), null));
         }
     }
 

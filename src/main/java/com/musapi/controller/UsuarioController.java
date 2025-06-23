@@ -156,4 +156,42 @@ public class UsuarioController {
                     .body(new RespuestaDTO<>("Error al buscar artistas.", null));
         }
     }
+    
+    @GetMapping("/buscar")
+    public ResponseEntity<RespuestaDTO<List<UsuarioDTO>>> buscarUsuario(
+            @RequestParam("texto") String texto,
+            @RequestParam("idUsuario") Integer idUsuario) {
+        try {
+            List<UsuarioDTO> usuarios = usuarioService.buscarUsuarios(texto, idUsuario);
+            if (usuarios.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>("No se encontraron usuarios.", usuarios));
+            }
+            return ResponseEntity.ok(new RespuestaDTO<>("Usuarios encontrados exitosamente.", usuarios));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Error al buscar usuarios: " + e.getMessage(), null));
+        }
+    }
+
+    
+    @DeleteMapping("/{idUsuario}/eliminar")
+    public ResponseEntity<RespuestaDTO<Void>> eliminarUsuario(
+            @PathVariable Integer idUsuario,
+            @RequestParam("motivo") String motivo) {
+        try {
+            usuarioService.eliminarUsuario(idUsuario, motivo);
+            return ResponseEntity.ok(new RespuestaDTO<>("Usuario eliminado con éxito.", null));
+        } catch (IllegalArgumentException e) {
+            System.out.println("EXCEPCION1: "+e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new RespuestaDTO<>(e.getMessage(), null));
+        } catch (Exception e) {
+            System.out.println("EXCEPCION2: "+e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespuestaDTO<>("Error al eliminar usuario: " + e.getMessage(), null));
+        }
+    }
+
+
 }

@@ -25,4 +25,11 @@ public interface UsuarioRepository  extends JpaRepository<Usuario, Integer> {
            "(LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :busqueda, '%')) OR " +
            "LOWER(u.nombre) LIKE LOWER(CONCAT('%', :busqueda, '%')))")
     List<Usuario> buscarArtistasPorNombreOUsuario(@Param("busqueda") String busqueda);
+    
+    @Query("SELECT u FROM Usuario u WHERE u.esAdmin = false AND u.id <> :idActual AND " +
+            "(LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :busqueda, '%')) OR " +
+            "LOWER(u.nombre) LIKE LOWER(CONCAT('%', :busqueda, '%')))")
+     List<Usuario> buscarUsuariosPorNombreOUsuario(@Param("busqueda") String busqueda, @Param("idActual") Integer idActual);
+
+
 }
