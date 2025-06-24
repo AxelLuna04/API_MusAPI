@@ -54,50 +54,67 @@ public class ContenidoGuardadoService {
     @Autowired
     private PerfilArtistaRepository perfilArtistaRepository;
     
-    public String guardarContenido(ContenidoGuardadoDTO dto){
-        
-        String mensajeCR = "Contenido repetido.";
+    public String guardarContenido(ContenidoGuardadoDTO dto) {
+
         String mensajeCNE = "Contenido no encontrado";
         Usuario usuario = usuarioRepository.findByIdUsuario(dto.getIdUsuario());
-        if (usuario == null) return "Usuario no encontrado";
-        
+        if (usuario == null) {
+            return "Usuario no encontrado";
+        }
+
         ContenidoGuardado contenido = new ContenidoGuardado();
         contenido.setUsuario(usuario);
-        
+
         switch (dto.getTipoDeContenido()) {
-            
+
             case ALBUM -> {
                 Album album = albumRepository.findByIdAlbum(dto.getIdContenidoGuardado());
-                if(album == null) return mensajeCNE;
-                
-                if(contenidoGuardadoRepository.findByUsuarioAndAlbum(usuario, album) != null) return mensajeCR;
-                
+                if (album == null) {
+                    return mensajeCNE;
+                }
+
+                if (contenidoGuardadoRepository.findByUsuarioAndAlbum(usuario, album) != null) {
+                    return "Este álbum ya se encuentra en tus contenidos guardados";
+                }
+
                 contenido.setAlbum(album);
             }
             case CANCION -> {
                 Cancion cancion = cancionRepository.findByIdCancion(dto.getIdContenidoGuardado());
-                if(cancion == null) return mensajeCNE;
-                 
-                if(contenidoGuardadoRepository.findByUsuarioAndCancion(usuario, cancion) != null) return mensajeCR;
-                
+                if (cancion == null) {
+                    return mensajeCNE;
+                }
+
+                if (contenidoGuardadoRepository.findByUsuarioAndCancion(usuario, cancion) != null) {
+                    return "Este contenido ya se encuentra en tus contenidos guardados";
+                }
+
                 contenido.setCancion(cancion);
             }
-                
+
             case LISTA -> {
                 ListaDeReproduccion lista = listaRepository.findByIdListaDeReproduccion(dto.getIdContenidoGuardado());
-                if(lista == null) return mensajeCNE;
-                
-                if(contenidoGuardadoRepository.findByUsuarioAndListaDeReproduccion(usuario, lista) != null) return mensajeCR;
-                 
+                if (lista == null) {
+                    return mensajeCNE;
+                }
+
+                if (contenidoGuardadoRepository.findByUsuarioAndListaDeReproduccion(usuario, lista) != null) {
+                    return "Esta lsita ya se encuentra en tus contenidos guardados";
+                }
+
                 contenido.setListaDeReproduccion(lista);
             }
-                
+
             case ARTISTA -> {
                 PerfilArtista artista = perfilArtistaRepository.findByIdPerfilArtista(dto.getIdContenidoGuardado());
-                if(artista == null) return mensajeCNE;
-                  
-                if(contenidoGuardadoRepository.findByUsuarioAndPerfilArtista(usuario, artista) != null) return mensajeCR;
-                
+                if (artista == null) {
+                    return mensajeCNE;
+                }
+
+                if (contenidoGuardadoRepository.findByUsuarioAndPerfilArtista(usuario, artista) != null) {
+                    return "Ya sigues a este artista";
+                }
+
                 contenido.setPerfilArtista(artista);
             }
             default -> {
@@ -108,10 +125,12 @@ public class ContenidoGuardadoService {
         contenidoGuardadoRepository.save(contenido);
         return "Contenido guardado exitosamente";
     }
-    
+
     public List<BusquedaCancionDTO> obtenerCancionesGuardadasPorUsuario(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findByIdUsuario(idUsuario);
-        if (usuario == null) return Collections.emptyList();
+        if (usuario == null) {
+            return Collections.emptyList();
+        }
 
         List<ContenidoGuardado> guardados = contenidoGuardadoRepository.findByUsuarioAndCancionIsNotNull(usuario);
         List<BusquedaCancionDTO> cancionesDTO = new ArrayList<>();
@@ -126,10 +145,10 @@ public class ContenidoGuardadoService {
             dto.setUrlFoto(cancion.getUrlFoto());
 
             String nombreArtistas = cancion.getPerfilArtista_CancionList().isEmpty()
-                ? "Desconocido"
-                : cancion.getPerfilArtista_CancionList().stream()
-                    .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
-                    .collect(Collectors.joining(", "));
+                    ? "Desconocido"
+                    : cancion.getPerfilArtista_CancionList().stream()
+                            .map(pac -> pac.getPerfilArtista().getUsuario().getNombreUsuario())
+                            .collect(Collectors.joining(", "));
 
             dto.setNombreArtista(nombreArtistas);
             dto.setFechaPublicacion(cancion.getFechaPublicacion() != null ? cancion.getFechaPublicacion().toString() : null);
@@ -140,7 +159,7 @@ public class ContenidoGuardadoService {
         }
 
         return cancionesDTO;
-}
+    }
 
 
     public List<ListaDeReproduccionDTO> obtenerListasGuardadasPorUsuario(Integer idUsuario) {

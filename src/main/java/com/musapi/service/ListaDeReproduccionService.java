@@ -97,7 +97,7 @@ public class ListaDeReproduccionService {
             .anyMatch(rel -> rel.getCancion().getIdCancion().equals(dto.getIdCancion()));
 
         if (yaExiste) {
-            return "La canción ya está en la lista";
+            return "La canción ya se encuentra agregada en esa lista.";
         }
 
         ListaDeReproduccion_Cancion relacion = new ListaDeReproduccion_Cancion();
