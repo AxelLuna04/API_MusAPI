@@ -163,12 +163,9 @@ public class UsuarioService {
     }
     
     @Transactional
-    public void crearPerfilArtista(PerfilArtistaDTO perfilArtistaDTO) throws Exception {
-        Usuario usuario = usuarioRepository.findByIdUsuario(perfilArtistaDTO.getIdUsuario());
-
-        if (usuario == null) {
-            throw new Exception("Usuario no encontrado.");
-        }
+    public void crearPerfilArtista(PerfilArtistaDTO perfilArtistaDTO){
+        Usuario usuario = usuarioRepository.findById(perfilArtistaDTO.getIdUsuario())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
         PerfilArtista perfil = new PerfilArtista();
         perfil.setDescripcion(perfilArtistaDTO.getDescripcion());

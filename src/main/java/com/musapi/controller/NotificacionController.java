@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/notificaciones")
 public class NotificacionController {
+
     @Autowired
     private NotificacionService notificacionService;
 
@@ -30,7 +31,7 @@ public class NotificacionController {
     public List<NotificacionDTO> obtenerNotificacionesPendientes(@PathVariable Integer idUsuario) {
         return notificacionService.obtenerNotificacionesPendientes(idUsuario);
     }
-    
+
     @PutMapping("/marcar-leida/{idNotificacion}")
     public ResponseEntity<String> marcarComoLeida(@PathVariable Integer idNotificacion) {
         boolean exito = notificacionService.marcarNotificacionComoLeida(idNotificacion);
@@ -41,7 +42,7 @@ public class NotificacionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Notificación no encontrada.");
         }
     }
-    
+
     @PutMapping("/marcar-todas-leidas/{idUsuario}")
     public ResponseEntity<String> marcarTodasComoLeidas(@PathVariable Integer idUsuario) {
         boolean exito = notificacionService.marcarTodasComoLeidas(idUsuario);
@@ -52,6 +53,5 @@ public class NotificacionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No hay notificaciones pendientes.");
         }
     }
-
 
 }

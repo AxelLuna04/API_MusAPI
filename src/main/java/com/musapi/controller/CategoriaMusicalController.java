@@ -31,40 +31,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/categoriasMusicales")
 public class CategoriaMusicalController {
+
     @Autowired
     private CategoriaMusicalRepository categoriaMusicalRepository;
-    
+
     @Autowired
     private CategoriaMusicalService categoriaMusicalService;
-    
-    @PostMapping ("/registrar")
-    public CategoriaMusical registrarCategoriaMusical (@RequestBody CategoriaMusical categoriaMusical) {
+
+    @PostMapping("/registrar")
+    public CategoriaMusical registrarCategoriaMusical(@RequestBody CategoriaMusical categoriaMusical) {
         return categoriaMusicalRepository.save(categoriaMusical);
     }
-    
+
     @GetMapping
     public ResponseEntity<RespuestaDTO<List<CategoriaMusicalDTO>>> obtenerCategorias() {
-        try {
-            List<CategoriaMusicalDTO> resultados = categoriaMusicalService.obtenerCategorias();
+        List<CategoriaMusicalDTO> resultados = categoriaMusicalService.obtenerCategorias();
 
-            if (resultados.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        if (resultados.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new RespuestaDTO<>("No se encontraron categorías", resultados));
-            }
-
-            return ResponseEntity.ok(new RespuestaDTO<>("Categorias encontradas exitosamente", resultados));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RespuestaDTO<>("Ocurrió un error al buscar las categorias musicales", null));
         }
+
+        return ResponseEntity.ok(new RespuestaDTO<>("Categorias encontradas exitosamente", resultados));
+
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<CategoriaMusicalDTO> obtenerCategoriaMusicalPorId(@PathVariable Integer id) {
         CategoriaMusical categoriaMusical = categoriaMusicalRepository.findByIdCategoriaMusical(id);
-        
-        if(categoriaMusical != null) {
+
+        if (categoriaMusical != null) {
             CategoriaMusicalDTO categoriaMusicalDTO = new CategoriaMusicalDTO(categoriaMusical.getIdCategoriaMusical(), categoriaMusical.getNombre(), categoriaMusical.getDescripcion());
             return ResponseEntity.ok(categoriaMusicalDTO);
         } else {
@@ -76,18 +72,18 @@ public class CategoriaMusicalController {
     public ResponseEntity<CategoriaMusicalDTO> actualizarCategoriaMusical(@PathVariable Integer id, @RequestBody CategoriaMusical categoriaMusicalActualizada) {
         return categoriaMusicalRepository.findById(id)
                 .map(categoriaMusicalExistente -> {
-                    if(categoriaMusicalActualizada.getNombre() != null) {
+                    if (categoriaMusicalActualizada.getNombre() != null) {
                         categoriaMusicalExistente.setNombre(categoriaMusicalActualizada.getNombre());
                     }
-                    if(categoriaMusicalActualizada.getDescripcion() != null) {
+                    if (categoriaMusicalActualizada.getDescripcion() != null) {
                         categoriaMusicalExistente.setDescripcion(categoriaMusicalActualizada.getDescripcion());
                     }
 
                     CategoriaMusical categoriaActualizada = categoriaMusicalRepository.save(categoriaMusicalExistente);
                     CategoriaMusicalDTO categoriaMusicalDTO = new CategoriaMusicalDTO(
-                        categoriaActualizada.getIdCategoriaMusical(),
-                        categoriaActualizada.getNombre(),
-                        categoriaActualizada.getDescripcion()
+                            categoriaActualizada.getIdCategoriaMusical(),
+                            categoriaActualizada.getNombre(),
+                            categoriaActualizada.getDescripcion()
                     );
 
                     return ResponseEntity.ok(categoriaMusicalDTO);
@@ -98,8 +94,8 @@ public class CategoriaMusicalController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarCategoriaMusical(@PathVariable Integer id) {
         Optional<CategoriaMusical> categoriaMusical = categoriaMusicalRepository.findById(id);
-        
-        if(categoriaMusical.isPresent()) {
+
+        if (categoriaMusical.isPresent()) {
             categoriaMusicalRepository.delete(categoriaMusical.get());
             return ResponseEntity.ok().build();
         } else {

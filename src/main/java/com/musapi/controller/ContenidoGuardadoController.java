@@ -28,26 +28,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/contenidoGuardado")
 public class ContenidoGuardadoController {
-    @Autowired 
+
+    @Autowired
     private ContenidoGuardadoService contenidoService;
-    
+
     @PostMapping("/guardar")
     public ResponseEntity<RespuestaDTO<String>> guardarContenido(@RequestBody ContenidoGuardadoDTO dto) {
-        try {
-            String mensaje = contenidoService.guardarContenido(dto);
+        String mensaje = contenidoService.guardarContenido(dto);
 
-            if ("Contenido guardado exitosamente".equals(mensaje)) {
-                return ResponseEntity.ok(new RespuestaDTO<>(mensaje, null));
-            } else {
-                return ResponseEntity.badRequest().body(new RespuestaDTO<>(mensaje, null));
-            }
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(ex.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
+        if ("Contenido guardado exitosamente".equals(mensaje)) {
+            return ResponseEntity.ok(new RespuestaDTO<>(mensaje, null));
+        } else {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>(mensaje, null));
         }
     }
-    
+
     @GetMapping("/canciones/{idUsuario}")
     public ResponseEntity<RespuestaDTO<List<BusquedaCancionDTO>>> obtenerCancionesGuardadasPorIdUsuario(@PathVariable Integer idUsuario) {
         List<BusquedaCancionDTO> canciones = contenidoService.obtenerCancionesGuardadasPorUsuario(idUsuario);

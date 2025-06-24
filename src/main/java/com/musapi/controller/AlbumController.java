@@ -32,130 +32,76 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/albumes")
 public class AlbumController {
+
     @Autowired
     private AlbumService albumService;
-    
+
     @GetMapping("/buscar")
     public ResponseEntity<RespuestaDTO<List<BusquedaAlbumDTO>>> buscarAlbumes(@RequestParam("texto") String texto) {
-        try {
-            List<BusquedaAlbumDTO> resultados = albumService.buscarAlbumesPorNombre(texto);
-            if (resultados.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        List<BusquedaAlbumDTO> resultados = albumService.buscarAlbumesPorNombre(texto);
+        if (resultados.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new RespuestaDTO<>("No se encontraron álbumes", resultados));
-            }
-            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes encontrados exitosamente", resultados));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RespuestaDTO<>("Ocurrió un error al buscar los álbumes", null));
         }
+        return ResponseEntity.ok(new RespuestaDTO<>("Álbumes encontrados exitosamente", resultados));
+
     }
-    
+
     @PostMapping("/crear")
     public ResponseEntity<RespuestaDTO<Void>> crearAlbum(@ModelAttribute AlbumDTO albumDTO) {
-        try {
-            albumService.crearAlbum(albumDTO);
-            return ResponseEntity.ok(new RespuestaDTO<>("Álbum creado exitosamente.", null));
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(ex.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Error al crear el álbum: " + e.getMessage(), null));
-        }
+        albumService.crearAlbum(albumDTO);
+        return ResponseEntity.ok(new RespuestaDTO<>("Álbum creado exitosamente.", null));
     }
 
     @GetMapping("/publicos")
     public ResponseEntity<RespuestaDTO<List<InfoAlbumDTO>>> obtenerInfoAlbumesPublicos() {
-        try {
-            List<InfoAlbumDTO> albumes = albumService.obtenerInfoAlbumesPublicos();
+        List<InfoAlbumDTO> albumes = albumService.obtenerInfoAlbumesPublicos();
 
-            if (albumes.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        if (albumes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new RespuestaDTO<>("No hay álbumes públicos disponibles", albumes));
-            }
-
-            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes públicos recuperados exitosamente", albumes));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes públicos", null));
         }
+
+        return ResponseEntity.ok(new RespuestaDTO<>("Álbumes públicos recuperados exitosamente", albumes));
     }
-    
+
     @GetMapping("/pendientes")
     public ResponseEntity<RespuestaDTO<List<InfoAlbumDTO>>> obtenerInfoAlbumesPrivados(@RequestParam("idPerfilArtista") int idPerfilArtista) {
-        try {
-            List<InfoAlbumDTO> albumes = albumService.obtenerInfoAlbumesPendientesPorArtista(idPerfilArtista);
-            if (albumes.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new RespuestaDTO<>("No existen álbumes pendientes", albumes));
-            }
-            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes pendientes recuperados exitosamente", albumes));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes pendientes", null));
+        List<InfoAlbumDTO> albumes = albumService.obtenerInfoAlbumesPendientesPorArtista(idPerfilArtista);
+        if (albumes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>("No existen álbumes pendientes", albumes));
         }
+        return ResponseEntity.ok(new RespuestaDTO<>("Álbumes pendientes recuperados exitosamente", albumes));
     }
-    
+
     @GetMapping("/artista")
     public ResponseEntity<RespuestaDTO<List<BusquedaAlbumDTO>>> obtenerAlbumesPublicos(@RequestParam("idPerfilArtista") int idPerfilArtista) {
-        try {
-            List<BusquedaAlbumDTO> albumes = albumService.obtenerAlbumesPorArtista(idPerfilArtista);
-            if (albumes.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new RespuestaDTO<>("No existen álbumes públicos", albumes));
-            }
-            return ResponseEntity.ok(new RespuestaDTO<>("Álbumes públicos recuperados exitosamente", albumes));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Ocurrió un error al recuperar los álbumes públicos: "+e.getMessage(), null));
+        List<BusquedaAlbumDTO> albumes = albumService.obtenerAlbumesPorArtista(idPerfilArtista);
+        if (albumes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new RespuestaDTO<>("No existen álbumes públicos", albumes));
         }
+        return ResponseEntity.ok(new RespuestaDTO<>("Álbumes públicos recuperados exitosamente", albumes));
     }
 
     @PutMapping("/publicar/{idAlbum}")
     public ResponseEntity<RespuestaDTO<Void>> publicarAlbum(@PathVariable int idAlbum) {
-        try {
-            albumService.publicarAlbum(idAlbum);
-            return ResponseEntity.ok(new RespuestaDTO<>("Álbum y sus canciones publicados exitosamente", null));
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(ex.getMessage(), null));
-        } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new RespuestaDTO<>("Álbum no encontrado", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Error al publicar el álbum: " + e.getMessage(), null));
-        }
+        albumService.publicarAlbum(idAlbum);
+        return ResponseEntity.ok(new RespuestaDTO<>("Álbum y sus canciones publicados exitosamente", null));
     }
-    
+
     @DeleteMapping("/{idAlbum}/eliminar")
     public ResponseEntity<RespuestaDTO<String>> eliminarAlbum(@PathVariable int idAlbum) {
-        try {
-            String resultado = albumService.eliminarAlbum(idAlbum);
-            System.out.println(resultado);
-            return ResponseEntity.ok(new RespuestaDTO<>(resultado, null));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RespuestaDTO<>("Error al eliminar el album: " + e.getMessage(), null));
-        }
+        String resultado = albumService.eliminarAlbum(idAlbum);
+        System.out.println(resultado);
+        return ResponseEntity.ok(new RespuestaDTO<>(resultado, null));
     }
-    
+
     @PutMapping("/editar")
     public ResponseEntity<RespuestaDTO<Void>> editarAlbum(@ModelAttribute AlbumDTO albumDTO) {
-        try {
-            albumService.editarAlbum(albumDTO);
-            return ResponseEntity.ok(new RespuestaDTO<>("Álbum editado exitosamente.", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RespuestaDTO<>("Error al editar el álbum: " + e.getMessage(), null));
-        }
+        albumService.editarAlbum(albumDTO);
+        return ResponseEntity.ok(new RespuestaDTO<>("Álbum editado exitosamente.", null));
     }
 
 }

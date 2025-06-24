@@ -21,23 +21,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/evaluaciones")
 public class EvaluacionController {
-    
+
     @Autowired
     private EvaluacionService evaluacionService;
-    
+
     @PostMapping("/registrar")
     public ResponseEntity<RespuestaDTO<String>> registrarEvaluacion(@RequestBody EvaluacionArtistaDTO evaluacionDTO) {
-        try {
-            String resultado = evaluacionService.EvaluarArtista(evaluacionDTO);
+        String resultado = evaluacionService.EvaluarArtista(evaluacionDTO);
 
-            if (resultado.equals("Evaluacion registrada con exito.")) {
-                return ResponseEntity.ok(new RespuestaDTO<>("Operación exitosa", resultado));
-            } else {
-                return ResponseEntity.badRequest().body(new RespuestaDTO<>("Error en la operación", resultado));
-            }
-        } catch (Exception ex) {
-            return ResponseEntity.status(500)
-                .body(new RespuestaDTO<>("El sistema falló al conectarse a la base de datos.", null));
+        if (resultado.equals("Evaluacion registrada con exito.")) {
+            return ResponseEntity.ok(new RespuestaDTO<>("Operación exitosa", resultado));
+        } else {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>("Error en la operación", resultado));
         }
     }
 

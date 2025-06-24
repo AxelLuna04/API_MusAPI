@@ -28,75 +28,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/estadisticas")
 public class EstadisticasController {
-    
+
     @Autowired
     private EstadisticasService estadisticasService;
-    
+
     @GetMapping("/contenidoSubido")
     public ResponseEntity<RespuestaDTO<EstadisticasContenidoSubidoDTO>> obtenerEstadisticasContenidoSubido(
             @RequestParam Integer idPerfilArtista,
             @RequestParam String tipoContenido
     ) {
-        try {
-            EstadisticasContenidoSubidoDTO resultado = estadisticasService.obtenerEstadisticas(idPerfilArtista, tipoContenido);
-            RespuestaDTO<EstadisticasContenidoSubidoDTO> respuesta = new RespuestaDTO<>("Estadísticas obtenidas correctamente", resultado);
-            return ResponseEntity.ok(respuesta);
-
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(404).body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
-        }
+        EstadisticasContenidoSubidoDTO resultado = estadisticasService.obtenerEstadisticas(idPerfilArtista, tipoContenido);
+        RespuestaDTO<EstadisticasContenidoSubidoDTO> respuesta = new RespuestaDTO<>("Estadísticas obtenidas correctamente", resultado);
+        return ResponseEntity.ok(respuesta);
     }
-    
+
     @GetMapping("/personales")
     public ResponseEntity<RespuestaDTO<EstadisticasPersonalesDTO>> obtenerEstadisticasPersonales(
             @RequestParam Integer idUsuario,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin
     ) {
-        try {
-            EstadisticasPersonalesDTO resultado = estadisticasService.obtenerEstadisticasPersonales(idUsuario, fechaInicio, fechaFin);
-            RespuestaDTO<EstadisticasPersonalesDTO> respuesta = new RespuestaDTO<>("Estadísticas personales obtenidas correctamente", resultado);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
-        }
+        EstadisticasPersonalesDTO resultado = estadisticasService.obtenerEstadisticasPersonales(idUsuario, fechaInicio, fechaFin);
+        RespuestaDTO<EstadisticasPersonalesDTO> respuesta = new RespuestaDTO<>("Estadísticas personales obtenidas correctamente", resultado);
+        return ResponseEntity.ok(respuesta);
+
     }
 
     @GetMapping("/numeroUsuarios")
     public ResponseEntity<RespuestaDTO<EstadisticasNumeroUsuariosDTO>> obtenerConteoUsuariosArtistas() {
-        try {
-            EstadisticasNumeroUsuariosDTO resultado = estadisticasService.obtenerConteoUsuariosYArtistas();
-            return ResponseEntity.ok(new RespuestaDTO<>("Conteo obtenido correctamente", resultado));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
-        }
+        EstadisticasNumeroUsuariosDTO resultado = estadisticasService.obtenerConteoUsuariosYArtistas();
+        return ResponseEntity.ok(new RespuestaDTO<>("Conteo obtenido correctamente", resultado));
     }
 
     @GetMapping("/topArtistas")
     public ResponseEntity<RespuestaDTO<List<ArtistaMasEscuchadoDTO>>> obtenerTopArtistas(
             @RequestParam("fechaInicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam("fechaFin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
-        try {
-            List<ArtistaMasEscuchadoDTO> resultado = estadisticasService.obtenerTop10ArtistasMasEscuchados(fechaInicio, fechaFin);
-            return ResponseEntity.ok(new RespuestaDTO<>("Top artistas obtenido correctamente", resultado));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
-        }
+        List<ArtistaMasEscuchadoDTO> resultado = estadisticasService.obtenerTop10ArtistasMasEscuchados(fechaInicio, fechaFin);
+        return ResponseEntity.ok(new RespuestaDTO<>("Top artistas obtenido correctamente", resultado));
     }
-    
+
     @GetMapping("/topCanciones")
     public ResponseEntity<RespuestaDTO<List<CancionMasEscuchadaDTO>>> obtenerTopCanciones(
             @RequestParam("fechaInicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam("fechaFin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
-        try {
-            List<CancionMasEscuchadaDTO> resultado = estadisticasService.obtenerTop10CancionesMasEscuchadas(fechaInicio, fechaFin);
-            return ResponseEntity.ok(new RespuestaDTO<>("Top canciones obtenido correctamente", resultado));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
-        }
+        List<CancionMasEscuchadaDTO> resultado = estadisticasService.obtenerTop10CancionesMasEscuchadas(fechaInicio, fechaFin);
+        return ResponseEntity.ok(new RespuestaDTO<>("Top canciones obtenido correctamente", resultado));
     }
 }

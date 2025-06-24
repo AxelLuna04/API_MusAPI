@@ -23,22 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/escucha")
 public class EscuchaController {
-    
+
     @Autowired
     private EscuchaService escuchaService;
 
     @PostMapping("/registrar")
     public ResponseEntity<RespuestaDTO<Void>> registrarEscucha(@RequestBody EscuchaDTO escuchaDTO) {
-        try {
-            System.out.println("\tidusuario: "+escuchaDTO.getIdUsuario()+"\n\tidcancion: "+escuchaDTO.getIdCancion()+" \n\tsegundos: "+escuchaDTO.getSegundosEscucha());
-            escuchaService.registrarEscucha(escuchaDTO);
-            return ResponseEntity.ok(new RespuestaDTO<>("Escucha registrada correctamente.", null));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Error al registrar la escucha: "+e.getMessage(), null));
-        }
+        System.out.println("\tidusuario: " + escuchaDTO.getIdUsuario() + "\n\tidcancion: " + escuchaDTO.getIdCancion() + " \n\tsegundos: " + escuchaDTO.getSegundosEscucha());
+        escuchaService.registrarEscucha(escuchaDTO);
+        return ResponseEntity.ok(new RespuestaDTO<>("Escucha registrada correctamente.", null));
     }
 }

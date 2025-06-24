@@ -22,24 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/solicitudesDeColaboracion")
 public class SolicitudColaboracionController {
-    
+
     @Autowired
     private SolicitudDeColaboracionService solicitudService;
-    
+
     @PutMapping("/{idNotificacion}/responder")
     public ResponseEntity<RespuestaDTO<String>> responderSolicitudColaboracion(
-        @PathVariable Integer idNotificacion,
-        @RequestParam("respuesta") String respuesta
+            @PathVariable Integer idNotificacion,
+            @RequestParam("respuesta") String respuesta
     ) {
-        try {
-            String resultado = solicitudService.responderSolicitudColaboracion(idNotificacion, respuesta);
-            return ResponseEntity.ok(new RespuestaDTO<>(resultado, null));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Error interno al procesar la solicitud.", null));
-        }
+        String resultado = solicitudService.responderSolicitudColaboracion(idNotificacion, respuesta);
+        return ResponseEntity.ok(new RespuestaDTO<>(resultado, null));
     }
 
 }

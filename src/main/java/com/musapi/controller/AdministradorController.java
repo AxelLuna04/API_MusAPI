@@ -25,41 +25,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/admin")
 public class AdministradorController {
-    
+
     @Autowired
     private UsuarioService usuarioService;
-    
+
     @Autowired
     private ContenidoService contenidoService;
-    
+
     @DeleteMapping("/{id}/eliminar-usuario")
     public ResponseEntity<RespuestaDTO<Void>> eliminarUsuario(
             @PathVariable Integer id,
             @RequestParam String motivo) {
-        try {
-            usuarioService.eliminarUsuario(id, motivo);
-            return ResponseEntity.ok(new RespuestaDTO<>("Usuario eliminado correctamente.", null));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Error al eliminar el usuario.", null));
-        }
+        usuarioService.eliminarUsuario(id, motivo);
+        return ResponseEntity.ok(new RespuestaDTO<>("Usuario eliminado correctamente.", null));
     }
-    
+
     @DeleteMapping("/eliminar-contenido")
     public ResponseEntity<RespuestaDTO<Void>> eliminarContenido(@RequestBody ContenidoDTO contenidoDTO) {
-        try {
-            contenidoService.eliminarContenido(contenidoDTO);
-            return ResponseEntity.ok(new RespuestaDTO<>("Contenido eliminado correctamente.", null));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RespuestaDTO<>("Error al eliminar el contenido.", null));
-        }
+        contenidoService.eliminarContenido(contenidoDTO);
+        return ResponseEntity.ok(new RespuestaDTO<>("Contenido eliminado correctamente.", null));
     }
 
 }

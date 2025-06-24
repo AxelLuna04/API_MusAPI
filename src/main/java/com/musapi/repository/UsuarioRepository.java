@@ -20,6 +20,7 @@ public interface UsuarioRepository  extends JpaRepository<Usuario, Integer> {
     List<Usuario> findByEsArtistaTrueAndNombreUsuarioContainingIgnoreCase(String nombreUsuario);//solo busca por el nombre de usuario
     Usuario findByIdUsuario(Integer idUsuario);
     Usuario findByIdUsuarioAndEsArtistaTrue(Integer idUsuario);
+    Usuario findByNombreUsuario(String nombreUsuario);
     
     @Query("SELECT u FROM Usuario u WHERE u.esArtista = true AND " +
            "(LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :busqueda, '%')) OR " +

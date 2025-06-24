@@ -32,68 +32,42 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/listasDeReproduccion")
 public class ListaDeReproduccionController {
-    
+
     @Autowired
     private ListaDeReproduccionService listaDeReproduccionService;
-    
+
     @PostMapping("/crear")
     public ResponseEntity<RespuestaDTO<String>> crearLista(@ModelAttribute CreacionListaDeReproduccionDTO dto) {
-        try {
-            String mensaje = listaDeReproduccionService.crearListaDeReproduccion(dto);
+        String mensaje = listaDeReproduccionService.crearListaDeReproduccion(dto);
 
-            if ("Lista creada con éxito".equals(mensaje)) {
-                return ResponseEntity.ok(new RespuestaDTO<>(mensaje, null));
-            } else {
-                return ResponseEntity.badRequest().body(new RespuestaDTO<>(mensaje, null));
-            }
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(ex.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
+        if ("Lista creada con éxito".equals(mensaje)) {
+            return ResponseEntity.ok(new RespuestaDTO<>(mensaje, null));
+        } else {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>(mensaje, null));
         }
     }
-    
+
     @PostMapping("/agregar-cancion")
     public ResponseEntity<RespuestaDTO<String>> agregarCancion(@RequestBody ListaDeReproduccion_CancionDTO dto) {
-        try {
-            String mensaje = listaDeReproduccionService.agregarCancionALista(dto);
+        String mensaje = listaDeReproduccionService.agregarCancionALista(dto);
 
-            if ("Canción agregada correctamente".equals(mensaje)) {
-                return ResponseEntity.ok(new RespuestaDTO<>(mensaje, null));
-            } else {
-                return ResponseEntity.badRequest().body(new RespuestaDTO<>(mensaje, null));
-            }
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
+        if ("Canción agregada correctamente".equals(mensaje)) {
+            return ResponseEntity.ok(new RespuestaDTO<>(mensaje, null));
+        } else {
+            return ResponseEntity.badRequest().body(new RespuestaDTO<>(mensaje, null));
         }
     }
-    
+
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<RespuestaDTO<List<ListaDeReproduccionDTO>>> obtenerListasPorUsuario(@PathVariable Integer idUsuario) {
-        try {
-            List<ListaDeReproduccionDTO> listas = listaDeReproduccionService.obtenerListasDeReproduccionPorIdUsuario(idUsuario);
-            return ResponseEntity.ok(new RespuestaDTO<>("Listas obtenidas correctamente", listas));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new RespuestaDTO<>("Error interno del servidor", null));
-        }
+        List<ListaDeReproduccionDTO> listas = listaDeReproduccionService.obtenerListasDeReproduccionPorIdUsuario(idUsuario);
+        return ResponseEntity.ok(new RespuestaDTO<>("Listas obtenidas correctamente", listas));
     }
-    
+
     @PutMapping("/editar")
     public ResponseEntity<RespuestaDTO<Void>> editarLista(@ModelAttribute CreacionListaDeReproduccionDTO listaDTO) {
-        try {
-            listaDeReproduccionService.editarLista(listaDTO);
-            return ResponseEntity.ok(new RespuestaDTO<>("Lista editada exitosamente.", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new RespuestaDTO<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RespuestaDTO<>("Error al editar la lista: " + e.getMessage(), null));
-        }
+        listaDeReproduccionService.editarLista(listaDTO);
+        return ResponseEntity.ok(new RespuestaDTO<>("Lista editada exitosamente.", null));
     }
 
 }
