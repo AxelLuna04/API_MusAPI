@@ -16,6 +16,7 @@ public class ChatHandshakeInterceptor implements HandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
         // URI: /ws/{idPerfilArtista}
         String path = request.getURI().getPath();
+        
         String idStr = path.substring(path.lastIndexOf('/') + 1);
         try {
             attributes.put("idPerfilArtista", Integer.parseInt(idStr));

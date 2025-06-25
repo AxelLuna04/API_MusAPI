@@ -4,6 +4,7 @@
  */
 package com.musapi.controller;
 
+import com.musapi.dto.ArtistaMasEscuchadoDTO;
 import com.musapi.dto.CancionMasEscuchadaDTO;
 import com.musapi.dto.EstadisticasContenidoSubidoDTO;
 import com.musapi.dto.EstadisticasNumeroUsuariosDTO;
