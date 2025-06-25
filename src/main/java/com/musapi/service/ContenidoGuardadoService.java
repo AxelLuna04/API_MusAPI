@@ -64,6 +64,11 @@ public class ContenidoGuardadoService {
 
         ContenidoGuardado contenido = new ContenidoGuardado();
         contenido.setUsuario(usuario);
+        
+        if (dto.getTipoDeContenido() == null) {
+            return "Tipo de contenido no disponible";
+        }
+
 
         switch (dto.getTipoDeContenido()) {
 

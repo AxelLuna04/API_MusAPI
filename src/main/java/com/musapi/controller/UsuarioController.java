@@ -167,5 +167,7 @@ public class UsuarioController {
         usuarioService.eliminarUsuario(idUsuario, motivo);
         return ResponseEntity.ok(new RespuestaDTO<>("Usuario eliminado con éxito.", null));
     }
+    
+    
 
 }

@@ -15,6 +15,17 @@ public class ContenidoGuardadoDTO {
     private Integer idContenidoGuardado;
     private TipoContenido tipoDeContenido;
 
+    public ContenidoGuardadoDTO(Integer idUsuario, Integer idContenidoGuardado, TipoContenido tipoDeContenido) {
+        this.idUsuario = idUsuario;
+        this.idContenidoGuardado = idContenidoGuardado;
+        this.tipoDeContenido = tipoDeContenido;
+    }
+
+    public ContenidoGuardadoDTO() {
+    }
+    
+    
+
     public Integer getIdUsuario() {
         return idUsuario;
     }

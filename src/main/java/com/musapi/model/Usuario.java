@@ -51,6 +51,7 @@ public class Usuario {
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private PerfilArtista perfilArtista;
     
+    
     // Getters y setters
 
     public Integer getIdUsuario() {

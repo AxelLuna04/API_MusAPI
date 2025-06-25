@@ -23,6 +23,10 @@ public class CreacionListaDeReproduccionDTO {
         this.foto = foto;
     }
 
+    public CreacionListaDeReproduccionDTO() {
+    }
+    
+
     public String getNombre() {
         return nombre;
     }

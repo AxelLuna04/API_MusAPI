@@ -35,6 +35,7 @@ public class AlbumController {
 
     @Autowired
     private AlbumService albumService;
+    
 
     @GetMapping("/buscar")
     public ResponseEntity<RespuestaDTO<List<BusquedaAlbumDTO>>> buscarAlbumes(@RequestParam("texto") String texto) {
