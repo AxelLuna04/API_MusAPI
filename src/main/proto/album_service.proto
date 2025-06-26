@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.musapi.grpc";
+option java_outer_classname = "AlbumServiceProto";
+
+service AlbumService {
+  rpc ObtenerAlbumesPublicos (EmptyRequest) returns (AlbumListResponse);
+}
+
+message EmptyRequest {}
+
+message AlbumDTO {
+  int32 idAlbum = 1;
+  string nombre = 2;
+  string nombreArtista = 3;
+  string urlFoto = 4;
+  string fechaPublicacion = 5;
+}
+
+message AlbumListResponse {
+  repeated AlbumDTO albumes = 1;
+}
+

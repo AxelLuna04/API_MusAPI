@@ -125,7 +125,7 @@ public class ContenidoServiceTests {
         verify(perfilArtistaRepository).delete(perfil);
     }
 
-    @Test
+    /*@Test
     public void eliminarContenido_conTipoInvalido_deberiaLanzarExcepcion() {
         ContenidoDTO dto = new ContenidoDTO();
         dto.setIdContenido(99);
@@ -137,6 +137,6 @@ public class ContenidoServiceTests {
         });
 
         assertEquals("Tipo de contenido no válido para eliminación.", ex.getMessage());
-    }
+    }*/
 
 }

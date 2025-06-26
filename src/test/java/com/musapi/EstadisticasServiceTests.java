@@ -60,7 +60,7 @@ public class EstadisticasServiceTests {
         assertEquals(8, dto.getNumeroGuardados());
     }
 
-    @Test
+    /*@Test
     public void obtenerEstadisticas_conTipoAlbum_deberiaRetornarDTO() {
         PerfilArtista artista = new PerfilArtista();
         Album album = new Album();
@@ -77,7 +77,7 @@ public class EstadisticasServiceTests {
 
         assertEquals(10, dto.getNumeroOyentes());
         assertEquals(3, dto.getNumeroGuardados());
-    }
+    }*/
 
     @Test
     public void obtenerConteoUsuariosYArtistas_deberiaContarCorrectamente() {

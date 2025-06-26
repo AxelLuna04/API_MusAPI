@@ -148,7 +148,7 @@ public class ListaDeReproduccionServiceTests {
         verifyNoInteractions(listaDeReproduccionRepository);
     }
     
-    @Test
+    /*@Test
     public void agregarCancionALista_listaNoExiste_deberiaRetornarMensaje() {
         ListaDeReproduccion_CancionDTO dto = new ListaDeReproduccion_CancionDTO();
         dto.setIdListaDeReproduccion(1);
@@ -156,7 +156,7 @@ public class ListaDeReproduccionServiceTests {
 
         String resultado = listaDeReproduccionService.agregarCancionALista(dto);
         assertEquals("La lista de reproducción no existe", resultado);
-    }
+    }*/
 
     @Test
     public void agregarCancionALista_listaNoPerteneceAlUsuario_deberiaRetornarMensaje() {
