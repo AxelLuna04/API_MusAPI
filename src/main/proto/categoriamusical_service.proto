@@ -1,8 +1,11 @@
 syntax = "proto3";
 
+package musapi.grpc;
+
 option java_multiple_files = true;
 option java_package = "com.musapi.grpc";
 option java_outer_classname = "CategoriaMusicalServiceProto";
+option csharp_namespace = "Musapi.Grpc";
 
 service CategoriaMusicalService {
   rpc RegistrarCategoriaMusical (CategoriaMusicalRequest) returns (CategoriaMusicalResponse);
@@ -18,4 +21,5 @@ message CategoriaMusicalResponse {
   string nombre = 2;
   string descripcion = 3;
 }
+
 
