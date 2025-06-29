@@ -9,6 +9,8 @@ option csharp_namespace = "Musapi.Grpc";
 
 service CategoriaMusicalService {
   rpc RegistrarCategoriaMusical (CategoriaMusicalRequest) returns (CategoriaMusicalResponse);
+  rpc ObtenerCategoriasMusicales (Empty) returns (CategoriaMusicalListResponse);
+  rpc EditarCategoriaMusical (CategoriaMusicalEditRequest) returns (CategoriaMusicalResponse);
 }
 
 message CategoriaMusicalRequest {
@@ -16,10 +18,23 @@ message CategoriaMusicalRequest {
   string descripcion = 2;
 }
 
+message CategoriaMusicalEditRequest {
+  int32 idCategoriaMusical = 1;
+  string nombre = 2;
+  string descripcion = 3;
+}
+
 message CategoriaMusicalResponse {
   int32 idCategoriaMusical = 1;
   string nombre = 2;
   string descripcion = 3;
 }
+
+message CategoriaMusicalListResponse {
+  repeated CategoriaMusicalResponse categorias = 1;
+}
+
+message Empty {}
+
 
 
