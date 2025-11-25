@@ -13,6 +13,7 @@ services:
       - backend
     volumes:
       - ./uploadsDocker:/app/uploads
+    restart: always
 
 
   db:
@@ -55,6 +56,7 @@ services:
       - api
     networks:
       - backend
+    restart: always
 
 volumes:
   sql-data:
