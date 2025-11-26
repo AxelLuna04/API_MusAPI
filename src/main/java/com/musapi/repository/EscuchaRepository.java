@@ -52,4 +52,5 @@ public interface EscuchaRepository extends JpaRepository<Escucha, Integer>{
     //Set<Integer> findOyentesByCancionIds(@Param("ids") Set<Integer> ids);
     List<Escucha> findByUsuario_IdUsuarioAndFechaEscuchaBetween(Integer idUsuario, LocalDate fechaInicio, LocalDate fechaFin);
     List<Escucha> findByFechaEscuchaBetween(LocalDate fechaInicio, LocalDate fechaFin);
+    List<Escucha> findByUsuario_IdUsuario(Integer idUsuario);
 }

@@ -37,5 +37,6 @@ public interface ContenidoGuardadoRepository extends JpaRepository<ContenidoGuar
     Set<Integer> findUsuariosByAlbumIds(@Param("ids") Set<Integer> ids);
     
     List<ContenidoGuardado> findByPerfilArtista(PerfilArtista perfilArtista);
+    List<ContenidoGuardado> findByUsuario_IdUsuario(Integer idUsuario);
 
 }
