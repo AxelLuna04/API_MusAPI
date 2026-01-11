@@ -1,6 +1,7 @@
 package com.musapi.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,6 +26,17 @@ public class WebConfig implements WebMvcConfigurer {
         
         registry.addResourceHandler("/uploads/archivos-canciones/**")
             .addResourceLocations(Paths.get("uploads/archivos-canciones").toAbsolutePath().toUri().toString());
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins(
+                    "https://commutatively-unstrategic-felipe.ngrok-free.dev"
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
 
