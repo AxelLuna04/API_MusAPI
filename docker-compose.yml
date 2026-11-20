@@ -7,6 +7,9 @@ services:
       - "8088:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - DB_SA_PASSWORD=${DB_SA_PASSWORD}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - db
     networks:
@@ -19,7 +22,7 @@ services:
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
-      - SA_PASSWORD=Musapi_2025
+      - SA_PASSWORD=${DB_SA_PASSWORD}
       - ACCEPT_EULA=Y
       - MSSQL_PID=Express
     ports:
@@ -36,12 +39,12 @@ services:
     entrypoint: >
       bash -c "
         for i in {1..30}; do
-          /opt/mssql-tools/bin/sqlcmd -S db -U SA -P 'Musapi_2025' -Q 'SELECT 1' && break || sleep 1
+          /opt/mssql-tools/bin/sqlcmd -S db -U SA -P '${DB_SA_PASSWORD}' -Q 'SELECT 1' && break || sleep 1
         done &&
-        /opt/mssql-tools/bin/sqlcmd -S db -U SA -P 'Musapi_2025' -i /sqlscript.sql
+        /opt/mssql-tools/bin/sqlcmd -S db -U SA -P '${DB_SA_PASSWORD}' -i /sqlscript.sql
       "
     volumes:
-      - ./sql/sqlscript.sql:/sqlscript.sql
+      - ./sql/sqlScript.sql:/sqlscript.sql
     networks:
       - backend
     restart: "no"

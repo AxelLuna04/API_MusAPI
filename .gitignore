@@ -38,3 +38,6 @@ build/
 
 nginx/
 
+
+### Variables de entorno locales (contraseñas). Nunca subir este archivo. ###
+.env
